@@ -1,15 +1,18 @@
 import React from "react";
+import HeroSlider from "../home/HeroSlider";
+import CostomerService from "../home/CostomerService";
+import AboutsUs from "./AboutsUs";
+import MobileApp from "../home/MobileApps";
+import SearchBar from "../home/SeachBer";
 
 const Home = () => {
   return (
     <div>
-      <label className="swap swap-flip text-9xl">
-        {/* this hidden checkbox controls the state */}
-        <input type="checkbox" />
-
-        <div className="swap-on">😈</div>
-        <div className="swap-off">😇</div>
-      </label>
+      <HeroSlider />
+      <SearchBar />
+      <MobileApp />
+      <CostomerService></CostomerService>
+      <AboutsUs />
     </div>
   );
 };

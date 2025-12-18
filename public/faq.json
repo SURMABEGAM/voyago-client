@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "question": "How can I purchase a ticket from Voyago?",
+    "answer": "You can purchase tickets from Voyago website or mobile app. For support call 16374."
+  },
+  {
+    "id": 2,
+    "question": "Is there any time limit to buy a ticket?",
+    "answer": "There is no time limit for online booking. Helpline is available from 7:00 AM to 11:00 PM."
+  },
+  {
+    "id": 3,
+    "question": "How can I cancel or migrate my ticket?",
+    "answer": "Ticket cancellation or migration must be done 12–24 hours before departure depending on operator."
+  },
+  {
+    "id": 4,
+    "question": "How can I check Voyago offers?",
+    "answer": "Visit Voyago website and check Deals & Offers section."
+  },
+  {
+    "id": 5,
+    "question": "I didn’t receive my refund yet. What should I do?",
+    "answer": "Refund takes 5–7 working days for mobile banking and 7–10 days for cards."
+  }
+]

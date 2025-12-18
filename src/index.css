@@ -1,3 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&family=Inconsolata:wght@500;600&display=swap');
+
 
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Google Fonts */
+
+
+:root {
+  /* Colors (Voyago logo based) */
+  --bg-color: #050b2e;
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --text-color: #eaf0ff;
+  --primary: #1e90ff;
+  --accent: #ff9f1c;
+
+  /* Fonts */
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-base: "Inconsolata", monospace;
+}
+
+/* Light Mode */
+.light {
+  --bg-color: #f4f6fb;
+  --card-bg: #ffffff;
+  --text-color: #1c1c1c;
+  --primary: #1e90ff;
+  --accent: #ff9f1c;
+}
+
+/* Global */
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-base); /* default */
+  margin: 0;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6,
+.logo {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Paragraph & content */
+p, span, li {
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+/* Buttons & nav */
+button, a {
+  font-family: var(--font-base);
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Md. Sohel",
+    "rating": 5,
+    "feedback": "Voyago bus service was very comfortable and punctual."
+  },
+  {
+    "id": 2,
+    "name": "Md.Rakib",
+    "rating": 4,
+    "feedback": "Online ticket booking was smooth and easy."
+  },
+  {
+    "id": 3,
+    "name": "Md.Taskin ",
+    "rating": 5,
+    "feedback": "AC bus was clean and journey was very pleasant."
+  },
+  {
+    "id": 4,
+    "name": "Mrs. Suma sikder",
+    "rating": 5,
+    "feedback": "Driver and staff were very polite and professional."
+  },
+  {
+    "id": 5,
+    "name": "najma bagum",
+    "rating": 4,
+    "feedback": "Bus departed on time. Overall good experience."
+  },
+  {
+    "id": 6,
+    "name": "Rapu Islam",
+    "rating": 5,
+    "feedback": "Customer support helped me quickly with seat issue."
+  }
+]

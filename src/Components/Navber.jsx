@@ -5,7 +5,7 @@ import { NavLink } from "react-router";
 import logo from "../assets/logo1.png";
 import { AuthContext } from "../Context/Authcontext";
 const Navbar = () => {
-  const { user, signOutUser } = useContext(AuthContext);
+  const { user, signOutUser, loading } = useContext(AuthContext);
 
   const handleLogout = () => {
     signOutUser();
@@ -23,6 +23,13 @@ const Navbar = () => {
     "Khulna",
     "Rangpur",
   ];
+  if (loading) {
+    return (
+      <div className="navbar bg-base-100 shadow-sm fixed top-0 z-50">
+        <span className="loading loading-spinner loading-sm ml-auto mr-4"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="navbar bg-base-100 shadow-sm fixed top-0 z-50">
@@ -91,7 +98,7 @@ const Navbar = () => {
             ) : (
               <>
                 <li>
-                  <NavLink to="/profile" className={navLinkClass}>
+                  <NavLink to="/userprofie" className={navLinkClass}>
                     My Profile
                   </NavLink>
                 </li>
@@ -180,8 +187,13 @@ const Navbar = () => {
             >
               <div className="w-10 rounded-full">
                 <img
-                  src={user.photoURL || "https://i.ibb.co/4pDNDk1/avatar.png"}
+                  src={
+                    user?.photoURL
+                      ? user.photoURL
+                      : "https://i.ibb.co/4pDNDk1/avatar.png"
+                  }
                   alt="user"
+                  className="object-cover"
                 />
               </div>
             </label>

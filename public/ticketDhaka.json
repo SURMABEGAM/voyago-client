@@ -3,6 +3,7 @@
     "id": "1",
     "title": "Dhaka to Chittagong AC Bus",
     "image": "https://cdn.pixabay.com/photo/2022/01/08/20/46/transport-6924808_1280.jpg",
+    "coach": "DHK-CTG-101",
     "from": "Dhaka",
     "to": "Chittagong",
     "price": 1200,
@@ -11,6 +12,8 @@
     "perks": ["AC", "WiFi", "Snacks"],
     "departureDate": "2025-12-25",
     "departureTime": "22:30",
+    "boardingPoint": "Gabtoli Bus Terminal",
+    "droppingPoint": "Chittagong Bus Stand",
     "approved": true,
     "isAdvertised": true,
     "createdAt": "2025-12-10"
@@ -19,6 +22,7 @@
     "id": "2",
     "title": "Dhaka to Sylhet Non-AC Bus",
     "image": "https://cdn.pixabay.com/photo/2015/11/03/21/47/edinburgh-1021490_1280.jpg",
+    "coach": "DHK-SYL-204",
     "from": "Dhaka",
     "to": "Sylhet",
     "price": 700,
@@ -27,6 +31,8 @@
     "perks": ["Comfort Seat"],
     "departureDate": "2025-12-20",
     "departureTime": "07:00",
+    "boardingPoint": "Sayedabad Bus Terminal",
+    "droppingPoint": "Sylhet Bus Terminal",
     "approved": true,
     "isAdvertised": false,
     "createdAt": "2025-12-12"
@@ -35,6 +41,7 @@
     "id": "3",
     "title": "Dhaka to Cox's Bazar AC Sleeper",
     "image": "https://cdn.pixabay.com/photo/2020/06/02/06/00/bridge-5249525_1280.jpg",
+    "coach": "DHK-CXB-330",
     "from": "Dhaka",
     "to": "Cox's Bazar",
     "price": 1800,
@@ -43,6 +50,8 @@
     "perks": ["Sleeper Seat", "AC", "Charging Port"],
     "departureDate": "2025-12-28",
     "departureTime": "21:00",
+    "boardingPoint": "Kolabagan Counter",
+    "droppingPoint": "Cox's Bazar Main Terminal",
     "approved": true,
     "isAdvertised": true,
     "createdAt": "2025-12-14"
@@ -51,6 +60,7 @@
     "id": "4",
     "title": "Dhaka to Rajshahi AC Bus",
     "image": "https://cdn.pixabay.com/photo/2023/05/25/09/00/bus-8016675_1280.jpg",
+    "coach": "DHK-RJS-411",
     "from": "Dhaka",
     "to": "Rajshahi",
     "price": 900,
@@ -59,6 +69,8 @@
     "perks": ["AC", "Reclining Seat"],
     "departureDate": "2025-12-22",
     "departureTime": "23:00",
+    "boardingPoint": "Gabtoli Bus Terminal",
+    "droppingPoint": "Rajshahi Bus Terminal",
     "approved": true,
     "isAdvertised": true,
     "createdAt": "2025-12-11"
@@ -67,6 +79,7 @@
     "id": "5",
     "title": "Dhaka to Khulna Non-AC Bus",
     "image": "https://cdn.pixabay.com/photo/2018/03/07/16/07/coach-3206326_1280.png",
+    "coach": "DHK-KHL-522",
     "from": "Dhaka",
     "to": "Khulna",
     "price": 650,
@@ -75,6 +88,8 @@
     "perks": ["Wide Seat"],
     "departureDate": "2025-12-18",
     "departureTime": "06:30",
+    "boardingPoint": "Sayedabad Bus Terminal",
+    "droppingPoint": "Khulna Bus Stand",
     "approved": true,
     "isAdvertised": false,
     "createdAt": "2025-12-09"
@@ -83,6 +98,7 @@
     "id": "6",
     "title": "Dhaka to Rangpur AC Bus",
     "image": "https://cdn.pixabay.com/photo/2015/02/26/04/24/hong-kong-649894_1280.jpg",
+    "coach": "DHK-RNG-608",
     "from": "Dhaka",
     "to": "Rangpur",
     "price": 1000,
@@ -91,6 +107,8 @@
     "perks": ["AC", "WiFi"],
     "departureDate": "2025-12-26",
     "departureTime": "20:00",
+    "boardingPoint": "Mohakhali Bus Stand",
+    "droppingPoint": "Rangpur Bus Terminal",
     "approved": true,
     "isAdvertised": true,
     "createdAt": "2025-12-15"
@@ -99,6 +117,7 @@
     "id": "7",
     "title": "Dhaka to Barisal Express",
     "image": "https://cdn.pixabay.com/photo/2017/06/21/23/44/bus-2429091_1280.jpg",
+    "coach": "DHK-BSL-709",
     "from": "Dhaka",
     "to": "Barisal",
     "price": 600,
@@ -107,6 +126,8 @@
     "perks": ["Fast Service"],
     "departureDate": "2025-12-21",
     "departureTime": "08:00",
+    "boardingPoint": "Sadarghat Terminal",
+    "droppingPoint": "Barisal Bus Stand",
     "approved": true,
     "isAdvertised": false,
     "createdAt": "2025-12-13"
@@ -115,6 +136,7 @@
     "id": "8",
     "title": "Dhaka to Mymensingh Local Bus",
     "image": "https://cdn.pixabay.com/photo/2017/07/27/19/10/bus-2546383_1280.jpg",
+    "coach": "DHK-MYM-1601",
     "from": "Dhaka",
     "to": "Mymensingh",
     "price": 350,
@@ -123,10 +145,13 @@
     "perks": ["Economy Fare"],
     "departureDate": "2025-12-19",
     "departureTime": "09:30",
+    "boardingPoint": "Mohakhali Bus Stand",
+    "droppingPoint": "Mymensingh Bus Stand",
     "approved": true,
     "isAdvertised": true,
     "createdAt": "2025-12-16"
   }
 ]
+
 
 

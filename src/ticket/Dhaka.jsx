@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
+import React, { useContext, useEffect, useState } from "react";
+
 import Swal from "sweetalert2";
+import UseAxiosSecure from "../hooks/UseAxiosSecure";
+import { AuthContext } from "../Context/Authcontext";
+import AuthProvider from "../Pages/AuthProvider";
 
 const Dhaka = () => {
   const [tickets, setTickets] = useState([]);
@@ -20,8 +23,20 @@ const Dhaka = () => {
     const diffDays = (departure - today) / (1000 * 60 * 60 * 24);
     return diffDays >= 0 && diffDays <= 7;
   };
-
+  const axiosSecure = UseAxiosSecure();
+  const { user } = useContext(AuthContext);
   const handleBook = (bus) => {
+    if (!user) {
+      return Swal.fire("Error", "Please login to book a ticket", "error");
+    }
+    const bookingData = {
+      busId: bus.id,
+      title: bus.title,
+      price: bus.price,
+      bookingDate: new Date(),
+      status: "pending",
+    };
+
     Swal.fire({
       title: "Proceed to Payment?",
       text: `Booking for ${bus.title} (BDT ${bus.price})`,
@@ -30,7 +45,20 @@ const Dhaka = () => {
       confirmButtonText: "Yes, Book Now",
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = `/payment/${bus.id}`;
+        // Vul: bookingDat -> Thik: bookingData
+        axiosSecure
+          .post("/tickets", bookingData)
+          .then((res) => {
+            // console.log-e res.data hobe (axios default response object)
+            console.log("after booking ticket", res.data);
+
+            if (res.data.insertedId) {
+              Swal.fire("Success!", "Your ticket has been booked.", "success");
+            }
+          })
+          .catch((error) => {
+            console.error("Error booking ticket:", error);
+          });
       }
     });
   };

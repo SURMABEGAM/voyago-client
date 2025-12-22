@@ -1,90 +1,89 @@
-import { useContext, useState } from "react";
-
+import { useContext } from "react";
 import { AuthContext } from "../Context/Authcontext";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
+import axios from "axios";
+import registerImg from "../assets/register (7).png";
+import { auth } from "../firebase/Firebase.init";
 
 const Register = () => {
-  const { createUser, googleLogin } = useContext(AuthContext);
-  const [error, setError] = useState("");
+  const { createUser, updateUserProfile, googleLogin } =
+    useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    setError("");
+  const { register, handleSubmit } = useForm();
 
-    const name = e.target.name.value;
-    const email = e.target.email.value;
-    const photo = e.target.photo.value;
-    const password = e.target.password.value;
+  const handleRegistration = async (data) => {
+    const result = await createUser(data.email, data.password);
+    console.log(result.user);
+    const formData = new FormData();
+    formData.append("image", data.photo[0]);
 
-    if (!/[A-Z]/.test(password)) {
-      return setError("Password must contain an uppercase letter");
-    }
-    if (!/[a-z]/.test(password)) {
-      return setError("Password must contain a lowercase letter");
-    }
-    if (password.length < 6) {
-      return setError("Password must be at least 6 characters");
-    }
+    const res = await axios.post(
+      `https://api.imgbb.com/1/upload?key=${
+        import.meta.env.VITE_image_host_key
+      }`,
+      formData
+    );
 
-    createUser(email, password)
-      .then(() => navigate("/"))
-      .catch((err) => setError(err.message));
+    await updateUserProfile({
+      displayName: data.name,
+      photoURL: res.data.data.display_url,
+    });
+
+    await auth.currentUser.reload();
+    navigate("/");
   };
 
-  const handleGoogleLogin = () => {
-    googleLogin()
-      .then(() => navigate("/"))
-      .catch((err) => setError(err.message));
+  const handleGoogle = async () => {
+    await googleLogin();
+    navigate("/");
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 border rounded">
-      <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
+    <div className="min-h-screen grid md:grid-cols-2 items-center">
+      <img src={registerImg} className="hidden md:block h-full object-cover" />
 
-      <form onSubmit={handleRegister}>
-        <input
-          name="name"
-          placeholder="Name"
-          required
-          className="w-full mb-2 p-2 border"
-        />
-        <input
-          name="email"
-          placeholder="Email"
-          required
-          className="w-full mb-2 p-2 border"
-        />
-        <input
-          name="photo"
-          placeholder="Photo URL"
-          className="w-full mb-2 p-2 border"
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          required
-          className="w-full mb-2 p-2 border"
-        />
+      <div className="p-8 max-w-md mx-auto">
+        <h2 className="text-3xl font-bold mb-4">Register</h2>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <form onSubmit={handleSubmit(handleRegistration)}>
+          <input
+            {...register("name")}
+            placeholder="Name"
+            className="input input-bordered w-full mb-2"
+          />
+          <input
+            {...register("email")}
+            placeholder="Email"
+            className="input input-bordered w-full mb-2"
+          />
+          <input
+            type="file"
+            {...register("photo")}
+            className="file-input w-full mb-2"
+          />
+          <input
+            type="password"
+            {...register("password")}
+            placeholder="Password"
+            className="input input-bordered w-full mb-3"
+          />
 
-        <button className="w-full bg-blue-600 text-white py-2 mt-3">
-          Register
+          <button className="btn btn-primary w-full">Register</button>
+        </form>
+
+        <button onClick={handleGoogle} className="btn btn-outline w-full mt-3">
+          Register with Google
         </button>
-      </form>
 
-      <button onClick={handleGoogleLogin} className="w-full border py-2 mt-3">
-        Register with Google
-      </button>
-
-      <p className="text-center mt-4">
-        Already have an account?{" "}
-        <Link className="text-blue-600" to="/login">
-          Login
-        </Link>
-      </p>
+        <p className="text-center mt-4">
+          Already have account?{" "}
+          <Link to="/login" className="text-blue-600">
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };

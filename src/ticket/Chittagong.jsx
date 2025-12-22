@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
 const Chittagong = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("/chittagongBus.json")
@@ -22,17 +24,20 @@ const Chittagong = () => {
 
   const handleBook = (bus) => {
     Swal.fire({
-      title: "Proceed to Payment?",
+      title: "Proceed to Booking?",
       text: `Booking for ${bus.title} (BDT ${bus.price})`,
       icon: "info",
       showCancelButton: true,
-      confirmButtonText: "Yes, Book Now",
+      confirmButtonText: "Yes, Continue",
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = `/payment/${bus.id}`;
+        navigate("/booking", {
+          state: { bus },
+        });
       }
     });
   };
+
   return (
     <>
       {/* ================= ALL CARDS ================= */}

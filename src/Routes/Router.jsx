@@ -2,11 +2,8 @@ import { createBrowserRouter } from "react-router";
 import Root from "./Root";
 import Error from "../error/Error";
 import Home from "../Pages/Home";
-
-import Dashboard from "../Pages/Dashboard";
 import Login from "../user/Login";
 import Register from "../user/Register";
-
 import AllTickets from "../Pages/AllTickets";
 import Dhaka from "../ticket/Dhaka";
 import Chittagong from "../ticket/Chittagong";
@@ -14,10 +11,12 @@ import Sylhet from "../ticket/Sylhet";
 import Rajshahi from "../ticket/Rajshahi";
 import Khulna from "../ticket/Khulna";
 import Rangpur from "../ticket/Rangpur";
+import Booking from "../ticket/Booking";
 import UserProfile from "../dashboard/UserProfile";
 import DashboardLayout from "../layout/DashboardLayout";
 import MyBookedTickets from "../dashboard/MyBookedTickets";
 import TransactionHistory from "../dashboard/TransactionHistory";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -31,7 +30,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "tickets",
-        Component: AllTickets,
+        Element: (
+          <PrivateRoute>
+            <AllTickets />,
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "privateroute",
+        Component: PrivateRoute,
       },
       {
         path: "tickets/dhaka",
@@ -56,6 +63,10 @@ export const router = createBrowserRouter([
       {
         path: "tickets/rangpur",
         Component: Rangpur,
+      },
+      {
+        path: "/booking",
+        Component: Booking,
       },
       {
         path: "/dashboard",

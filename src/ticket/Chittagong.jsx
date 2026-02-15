@@ -2,15 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
+import UseAxiosSecure from "../hooks/UseAxiosSecure";
+
 const Chittagong = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const navigate = useNavigate();
-
+  const axiosSecure = UseAxiosSecure();
   useEffect(() => {
-    fetch("/chittagongBus.json")
-      .then((res) => res.json())
-      .then((data) => setTickets(data))
+    axiosSecure
+      .get("/api/tickets")
+      .then((res) => {
+        setTickets(res.data);
+        console.log("Fetched tickets:", res.data);
+      })
       .catch((err) => console.error("Fetch error:", err));
   }, []);
 
@@ -42,7 +47,7 @@ const Chittagong = () => {
     <>
       {/* ================= ALL CARDS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
-        {tickets.map((bus) => (
+        {tickets.slice(5, 12).map((bus) => (
           <div
             key={bus.id}
             className={`card bg-base-100 shadow-lg ${

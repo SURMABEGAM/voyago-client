@@ -10,9 +10,12 @@ import {
 } from "firebase/auth";
 import { AuthContext } from "../Context/Authcontext";
 import { auth } from "../firebase/Firebase.init";
+import UseAxiosSecure from "../hooks/UseAxiosSecure";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
   const createUser = (email, password) =>
@@ -31,17 +34,33 @@ const AuthProvider = ({ children }) => {
   };
 
   // 🔥 Auth observer
+  const axiosSecure = UseAxiosSecure();
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+
+      if (currentUser?.email) {
+        try {
+          const res = await axiosSecure.get(`/users/role/${currentUser.email}`);
+          setRole(res.data.role);
+        } catch (error) {
+          console.error("Role fetch error", error);
+          setRole("user");
+        }
+      } else {
+        setRole(null);
+      }
+
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [axiosSecure]);
 
   const authInfo = {
     user,
+    role,
     loading,
     createUser,
     signInUser,

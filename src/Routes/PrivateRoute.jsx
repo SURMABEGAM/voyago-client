@@ -1,14 +1,13 @@
 import React, { useContext } from "react";
 import { Navigate, useLocation } from "react-router";
 import { AuthContext } from "../Context/Authcontext";
-import Loader from "../loder/Loading";
-
+import Loading from "../loder/Loading";
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
 
   if (loading) {
-    return <loading />;
+    return <Loading />;
   }
 
   // user না থাকলে login এ পাঠাবে
@@ -16,7 +15,7 @@ const PrivateRoute = ({ children }) => {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  return { children };
+  return children;
 };
 
 export default PrivateRoute;

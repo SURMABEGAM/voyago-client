@@ -4,6 +4,7 @@ import { AuthContext } from "../Context/Authcontext";
 import { useForm } from "react-hook-form";
 import loginImg from "../assets/Login.jpg";
 import { Link, useLocation, useNavigate } from "react-router";
+import axios from "axios";
 
 const Login = () => {
   const { signInUser, googleLogin, resetPassword } = useContext(AuthContext);
@@ -21,7 +22,20 @@ const Login = () => {
 
   const handleLogin = async (data) => {
     await signInUser(data.email, data.password);
-    navigate(from);
+
+    const res = await axios.get(
+      `http://localhost:5000/users/role/${data.email}`
+    );
+
+    const role = res.data.role;
+
+    if (role === "admin") {
+      navigate("/dashboard/admin");
+    } else if (role === "vendor") {
+      navigate("/dashboard/vendor");
+    } else {
+      navigate("/dashboard/user");
+    }
   };
 
   const handleGoogleLogin = async () => {

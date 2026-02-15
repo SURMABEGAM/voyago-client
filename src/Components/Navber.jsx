@@ -82,7 +82,7 @@ const Navbar = () => {
               </li>
             )}
 
-            {!user ? (
+            {!user?.photoURL ? (
               <>
                 <li>
                   <NavLink to="/login" className={navLinkClass}>
@@ -164,7 +164,7 @@ const Navbar = () => {
 
       {/* RIGHT */}
       <div className="navbar-end hidden lg:flex">
-        {!user ? (
+        {!user?.photoURL ? (
           <>
             <NavLink
               className="btn btn-outline btn-sm border-orange-400 text-orange-400"

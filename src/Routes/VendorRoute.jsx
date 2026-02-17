@@ -5,11 +5,15 @@ import { Navigate } from "react-router";
 const VendorRoute = ({ children }) => {
   const { user, role, loading } = useContext(AuthContext);
 
-  if (loading) {
+  if (loading || role === null) {
     return <span className="loading loading-spinner loading-lg"></span>;
   }
 
-  if (!user || role !== "vendor") {
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (role !== "vendor") {
     return <Navigate to="/" replace />;
   }
 

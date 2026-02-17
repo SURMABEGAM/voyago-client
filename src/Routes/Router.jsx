@@ -16,12 +16,14 @@ import UserProfile from "../dashboard/UserProfile";
 import DashboardLayout from "../layout/DashboardLayout";
 import MyBookedTickets from "../dashboard/MyBookedTickets";
 import TransactionHistory from "../dashboard/TransactionHistory";
+
 import PrivateRoute from "./PrivateRoute";
-import VendorProfile from "../dashboard/VendorProfile/VendorProfile";
-import AddTicket from "../dashboard/VendorProfile/AddTicket";
-import MyAddedTickets from "../dashboard/VendorProfile/MyAddedTickets";
-import RevenueOverview from "../dashboard/VendorProfile/RevenueOverview";
-import RequestedBookings from "../dashboard/VendorProfile/RequestedBookings";
+import VendorProfile from "../dashboard/vendorDashboard/VendorProfile";
+import ManuVendor from "../dashboard/vendorDashboard/ManuVendor";
+
+import AddTicket from "../dashboard/vendorDashboard/AddTicket";
+import MyAddedTickets from "../dashboard/vendorDashboard/MyAddedTickets";
+
 import VendorRoute from "./VendorRoute";
 import AdminRoute from "./AdminRoute";
 import AdminProfile from "../dashboard/adminProfile/AdminProfile";
@@ -90,7 +92,7 @@ export const router = createBrowserRouter([
         children: [
           // ===== USER =====
           { path: "user-profile", element: <UserProfile /> },
-          { path: "my-bookings", element: <MyBookedTickets /> },
+          { path: "booked-tickets", element: <MyBookedTickets /> },
           { path: "transactions", element: <TransactionHistory /> },
 
           // ===== VENDOR =====
@@ -101,38 +103,11 @@ export const router = createBrowserRouter([
                 <VendorProfile />
               </VendorRoute>
             ),
-          },
-          {
-            path: "add-ticket",
-            element: (
-              <VendorRoute>
-                <AddTicket />
-              </VendorRoute>
-            ),
-          },
-          {
-            path: "my-tickets",
-            element: (
-              <VendorRoute>
-                <MyAddedTickets />
-              </VendorRoute>
-            ),
-          },
-          {
-            path: "requested-bookings",
-            element: (
-              <VendorRoute>
-                <RequestedBookings />
-              </VendorRoute>
-            ),
-          },
-          {
-            path: "revenue",
-            element: (
-              <VendorRoute>
-                <RevenueOverview />
-              </VendorRoute>
-            ),
+            children: [
+              { path: "manu-vendor", element: <ManuVendor /> },
+              { path: "add-ticket", element: <AddTicket /> },
+              { path: "my-tickets", element: <MyAddedTickets /> },
+            ],
           },
 
           // ===== ADMIN =====

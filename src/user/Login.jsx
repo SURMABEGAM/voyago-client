@@ -5,10 +5,10 @@ import { useForm } from "react-hook-form";
 import loginImg from "../assets/Login.jpg";
 import { Link, useLocation, useNavigate } from "react-router";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Login = () => {
-  const { signInUser, googleLogin, resetPassword } = useContext(AuthContext);
-
+  const { googleLogin, resetPassword, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -20,36 +20,98 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  // ------------------- Handle Login -------------------
   const handleLogin = async (data) => {
-    await signInUser(data.email, data.password);
+    try {
+      const res = await axios.post("http://localhost:5000/api/login", data);
+      console.log("API Success:", res.data);
 
-    const res = await axios.get(
-      `http://localhost:5000/users/role/${data.email}`
-    );
+      localStorage.setItem("access-token", res.data.token);
 
-    const role = res.data.role;
+      console.log("Before setUser");
 
-    if (role === "admin") {
-      navigate("/dashboard/admin");
-    } else if (role === "vendor") {
-      navigate("/dashboard/vendor");
-    } else {
-      navigate("/dashboard/user");
+      setUser({
+        role: res.data.role,
+        email: data.email,
+        token: res.data.token,
+      });
+
+      console.log("After setUser");
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      console.log("Role:", res.data.role);
+
+      if (res.data.role === "vendor") {
+        console.log("Navigating to vendor dashboard");
+        navigate("/dashboard/vendor-dashboard/manu-vendor");
+      }
+    } catch (err) {
+      console.error("REAL ERROR:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: err.response?.data?.message || err.message,
+      });
     }
   };
 
+  // ------------------- Google Login -------------------
   const handleGoogleLogin = async () => {
-    await googleLogin();
-    navigate(from);
+    try {
+      const userCredential = await googleLogin();
+
+      setUser({
+        role: "user",
+        email: userCredential.user.email,
+        token: null,
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Google Login Successful",
+        text: `Welcome ${userCredential.user.email}`,
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      navigate(from);
+    } catch (err) {
+      console.error("Google login failed:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Google Login Failed",
+        text: "Something went wrong. Try again.",
+      });
+    }
   };
 
+  // ------------------- Forgot Password -------------------
   const handleForgot = async () => {
     const email = watch("email");
-    if (!email) return alert("Enter email first");
-    await resetPassword(email);
-    alert("Password reset email sent");
-  };
+    if (!email) return Swal.fire("Enter your email first");
 
+    try {
+      await resetPassword(email);
+      Swal.fire({
+        icon: "success",
+        title: "Password Reset",
+        text: "Password reset email sent",
+      });
+    } catch (err) {
+      console.error("Reset failed:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Reset Failed",
+        text: "Unable to send password reset email",
+      });
+    }
+  };
   return (
     <div className="min-h-screen grid md:grid-cols-2 items-center">
       <img src={loginImg} className="hidden md:block h-full object-cover" />

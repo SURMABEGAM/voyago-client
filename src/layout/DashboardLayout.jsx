@@ -22,7 +22,7 @@ const DashboardLayout = () => {
 
         {/* Navigation */}
         <nav className="space-y-2">
-          <NavLink to="profile" className={linkClass}>
+          <NavLink to="user-profile" className={linkClass}>
             <FaUserCircle className="text-xl" />
             <span>User Profile</span>
           </NavLink>

@@ -8,7 +8,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const Login = () => {
-  const { googleLogin, resetPassword, setUser } = useContext(AuthContext);
+  const { googleLogin, resetPassword, setUser, setLoading, signInUser } =
+    useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -22,7 +23,10 @@ const Login = () => {
 
   // ------------------- Handle Login -------------------
   const handleLogin = async (data) => {
+    setLoading(true);
     try {
+      const userCredential = await signInUser(data.email, data.password);
+      console.log("Firebase login successful:", userCredential);
       const res = await axios.post("http://localhost:5000/api/login", data);
       console.log("API Success:", res.data);
 
@@ -46,10 +50,15 @@ const Login = () => {
       });
 
       console.log("Role:", res.data.role);
-
-      if (res.data.role === "vendor") {
+      setLoading(false);
+      if (res.data.role === "admin") {
+        console.log("Navigating to admin dashboard");
+        navigate("/dashboard/manu-admin");
+      } else if (res.data.role === "vendor") {
         console.log("Navigating to vendor dashboard");
         navigate("/dashboard/vendor-dashboard/manu-vendor");
+      } else {
+        navigate("/dashboard/user-home");
       }
     } catch (err) {
       console.error("REAL ERROR:", err);
@@ -58,6 +67,7 @@ const Login = () => {
         title: "Login Failed",
         text: err.response?.data?.message || err.message,
       });
+      setLoading(false);
     }
   };
 

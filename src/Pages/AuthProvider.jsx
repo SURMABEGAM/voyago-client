@@ -38,21 +38,23 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      //
       setUser(currentUser);
-
       if (currentUser?.email) {
         try {
           const res = await axiosSecure.get(`/users/role/${currentUser.email}`);
+          console.log("Role fetch response:", res.data);
           setRole(res.data.role);
+          setLoading(false);
         } catch (error) {
           console.error("Role fetch error", error);
           setRole("user");
+          setLoading(false);
         }
       } else {
         setRole(null);
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -63,6 +65,7 @@ const AuthProvider = ({ children }) => {
     setUser,
     role,
     loading,
+    setLoading,
     createUser,
     signInUser,
     googleLogin,

@@ -23,7 +23,7 @@ const Sylhet = () => {
     const today = new Date();
     const departure = new Date(departureDate);
     const diffDays = (departure - today) / (1000 * 60 * 60 * 24);
-    return diffDays >= 0 && diffDays <= 7;
+    return diffDays >= 0 && diffDays <= 30; // আগামী ৩০ দিনের মধ্যে যাত্রা থাকলে বুকিং সম্ভব
   };
 
   const handleBook = (bus) => {
@@ -64,7 +64,7 @@ const Sylhet = () => {
       {/* Parent Div added */}
       {/* ================= ALL CARDS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tickets.slice(24, 30).map((bus) => (
+        {tickets.slice(18, 24).map((bus) => (
           <div
             key={bus._id}
             className={`card bg-base-100 shadow-lg border ${

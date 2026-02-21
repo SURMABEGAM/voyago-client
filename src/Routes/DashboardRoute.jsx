@@ -1,20 +1,11 @@
 import React from "react";
+import { Outlet } from "react-router";
 
 const DashboardRoute = () => {
   return (
     <div>
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <DashboardLayout />
-          </PrivateRoute>
-        }
-      >
-        <Route path="user" element={<UserDashboard />} />
-        <Route path="vendor" element={<VendorDashboard />} />
-        <Route path="admin" element={<AdminDashboard />} />
-      </Route>
+      <h1 className="text-8xl">DashboardRoute</h1>
+      <Outlet />
     </div>
   );
 };

@@ -3,10 +3,12 @@ import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
 import UseAxiosSecure from "../hooks/UseAxiosSecure";
+import { AuthContext } from "../Context/Authcontext";
 
 const Chittagong = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
+
   const navigate = useNavigate();
   const axiosSecure = UseAxiosSecure();
   useEffect(() => {
@@ -24,7 +26,7 @@ const Chittagong = () => {
     const today = new Date();
     const departure = new Date(departureDate);
     const diffDays = (departure - today) / (1000 * 60 * 60 * 24);
-    return diffDays >= 0 && diffDays <= 7;
+    return diffDays >= 0 && diffDays <= 15;
   };
 
   const handleBook = (bus) => {

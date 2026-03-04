@@ -2,19 +2,20 @@ import React, { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import UseAxiosSecure from "../hooks/UseAxiosSecure";
 import { AuthContext } from "../Context/Authcontext";
+import { useNavigate } from "react-router";
 
 const Dhaka = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const axiosSecure = UseAxiosSecure();
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
+  // Fetch tickets from backend
   useEffect(() => {
     axiosSecure
       .get("/api/tickets")
-      .then((res) => {
-        setTickets(res.data);
-      })
+      .then((res) => setTickets(res.data.slice(0, 6))) // Only first 6 tickets
       .catch((err) => console.error("Fetch error:", err));
   }, []);
 
@@ -23,15 +24,16 @@ const Dhaka = () => {
     const today = new Date();
     const departure = new Date(departureDate);
     const diffDays = (departure - today) / (1000 * 60 * 60 * 24);
-    return diffDays >= 0 && diffDays <= 7;
+    return diffDays >= 0 && diffDays <= 15;
   };
 
   const handleBook = (bus) => {
     if (!user) {
       return Swal.fire("Error", "Please login to book a ticket", "error");
     }
+
     const bookingData = {
-      busId: bus._id, // MongoDB তে সাধারণত _id থাকে
+      busId: bus._id,
       title: bus.title,
       price: bus.price,
       bookingDate: new Date(),
@@ -44,28 +46,31 @@ const Dhaka = () => {
       icon: "info",
       showCancelButton: true,
       confirmButtonText: "Yes, Book Now",
+      cancelButtonText: "No, Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         axiosSecure
-          .post("/tickets", bookingData)
+          .post("/api/booking", bookingData) // backend bookings route
           .then((res) => {
             if (res.data.insertedId) {
               Swal.fire("Success!", "Your ticket has been booked.", "success");
-              setSelectedBus(null); // বুকিং সফল হলে মডাল বন্ধ হবে
+
+              navigate("/tickets/booking", { state: { bus } }); // Pass bus data to booking page
+              setSelectedBus(null); // close modal after booking
             }
           })
           .catch((error) => console.error("Error booking ticket:", error));
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire("Cancelled", "Your booking was not completed", "info");
+        navigate("/");
       }
     });
   };
 
   return (
     <div className="p-10 mt-10">
-      {" "}
-      {/* Parent Div added */}
-      {/* ================= ALL CARDS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tickets.slice(0, 6).map((bus) => (
+        {tickets.map((bus) => (
           <div
             key={bus._id}
             className={`card bg-base-100 shadow-lg border ${
@@ -88,7 +93,6 @@ const Dhaka = () => {
               <p>💰 BDT {bus.price}</p>
 
               <div className="card-actions justify-end mt-4">
-                {/* এই বাটনটি মডাল ওপেন করবে */}
                 <button
                   onClick={() => setSelectedBus(bus)}
                   className="btn btn-primary btn-sm"
@@ -100,61 +104,35 @@ const Dhaka = () => {
           </div>
         ))}
       </div>
-      {/* ================= MODAL ================= */}
+
+      {/* Modal */}
       {selectedBus && (
-        <div className="modal modal-open">
-          <div className="modal-box max-w-md relative">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-96 relative">
             <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
+              className="absolute top-2 right-2 text-red-500 font-bold"
               onClick={() => setSelectedBus(null)}
             >
-              ✕
+              X
             </button>
-
-            <h3 className="font-bold text-lg mb-2">{selectedBus.title}</h3>
-            <img
-              src={selectedBus.image}
-              className="w-full h-40 object-cover rounded mb-3"
-            />
+            <h2 className="text-xl font-bold mb-2">{selectedBus.title}</h2>
             <p>
-              <b>From:</b> {selectedBus.from}
+              From: {selectedBus.from} → To: {selectedBus.to}
             </p>
+            <p>Price: BDT {selectedBus.price}</p>
             <p>
-              <b>To:</b> {selectedBus.to}
+              Departure:{" "}
+              {selectedBus.departureDate
+                ? new Date(selectedBus.departureDate).toLocaleString()
+                : "N/A"}
             </p>
-            <p>
-              <b>Price:</b> BDT {selectedBus.price}
-            </p>
-            <p>
-              <b>Seats:</b> {selectedBus.quantity}
-            </p>
-            <p>
-              <b>Departure:</b> {selectedBus.departureDate}
-            </p>
-
-            <div className="flex flex-wrap gap-1 mt-2">
-              {selectedBus.perks?.map((perk, i) => (
-                <span key={i} className="badge badge-outline badge-sm">
-                  {perk}
-                </span>
-              ))}
-            </div>
-
-            <div className="modal-action">
-              {selectedBus.quantity > 0 &&
-              isBookable(selectedBus.departureDate) ? (
-                <button
-                  className="btn btn-success"
-                  onClick={() => handleBook(selectedBus)}
-                >
-                  Book Now
-                </button>
-              ) : (
-                <span className="text-error font-semibold">
-                  Booking Not Available
-                </span>
-              )}
-            </div>
+            <button
+              className="btn btn-primary mt-4 w-full"
+              disabled={!isBookable(selectedBus.departureDate)}
+              onClick={() => handleBook(selectedBus)}
+            >
+              Book Now
+            </button>
           </div>
         </div>
       )}

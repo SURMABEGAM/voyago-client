@@ -8,7 +8,7 @@ const ManuUser = () => {
         <NavLink to="/dashboard/user-profile">User Profile</NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/my-bookings">My Booked Tickets</NavLink>
+        <NavLink to="/dashboard/booked-tickets">My Booked Tickets</NavLink>
       </li>
       <li>
         <NavLink to="/dashboard/transactions">Transaction History</NavLink>

@@ -1,33 +1,49 @@
-import { useState } from "react";
-// import StripeWrapper from "../stripe/StripeWrapper";
-// import CheckoutForm from "../stripe/CheckoutForm";
+import { useContext } from "react";
+import { AuthContext } from "../Context/Authcontext";
+import { useLocation } from "react-router";
 
 const Booking = () => {
-  const ticketPrice = 1200;
-  const [quantity, setQuantity] = useState(1);
+  const { state } = useLocation();
+  const { user } = useContext(AuthContext);
 
-  const totalPrice = ticketPrice * quantity;
+  const bus = state?.bus;
+
+  const handleCheckout = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ticketId: bus._id,
+          email: user.email,
+        }),
+      });
+
+      const data = await res.json();
+
+      // 🔥 Stripe Hosted Page redirect
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Payment Error:", error);
+    }
+  };
+
+  if (!bus) return <p>No booking data found</p>;
 
   return (
-    <div className="max-w-md mx-auto p-6 shadow rounded">
-      <h2 className="text-xl font-bold mb-4">Bus Ticket Booking</h2>
+    <div className="max-w-md mx-auto  text-amber-600 mt-10 p-5 border rounded">
+      <h1 className="text-2xl font-bold mb-5">Booking Summary</h1>
+      <h2 className="text-xl font-bold mb-4">{bus.title}</h2>
 
-      <p>Price per ticket: {ticketPrice}৳</p>
+      <p>From: {bus.from}</p>
+      <p>To: {bus.to}</p>
+      <p>Price: BDT {bus.price}</p>
 
-      <label className="block mt-3">Quantity</label>
-      <input
-        type="number"
-        min="1"
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-        className="border p-2 w-full"
-      />
-
-      <h3 className="mt-4 font-semibold">Total: {totalPrice}৳</h3>
-
-      {/* <StripeWrapper>
-        <CheckoutForm totalPrice={totalPrice} />
-       </StripeWrapper> */}
+      <button onClick={handleCheckout} className="btn btn-primary w-full mt-5">
+        Proceed to Payment
+      </button>
     </div>
   );
 };

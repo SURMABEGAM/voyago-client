@@ -14,7 +14,7 @@ import Rangpur from "../ticket/Rangpur";
 import Booking from "../ticket/Booking";
 import UserProfile from "../dashboard/UserProfile";
 import DashboardLayout from "../layout/DashboardLayout";
-import MyBookedTickets from "../dashboard/MyBookedTickets";
+
 import TransactionHistory from "../dashboard/TransactionHistory";
 
 import PrivateRoute from "./PrivateRoute";
@@ -31,6 +31,8 @@ import AdminProfile from "../dashboard/adminProfile/AdminProfile";
 import ManageTickets from "../dashboard/adminProfile/ManageTickets";
 import ManageUsers from "../dashboard/adminProfile/ManageUsers";
 import AdvertiseTickets from "../dashboard/adminProfile/AdvertiseTickets";
+import BookedTickets from "../dashboard/BookedTickets";
+import Success from "../ticket/Success";
 
 export const router = createBrowserRouter([
   {
@@ -46,7 +48,7 @@ export const router = createBrowserRouter([
         path: "tickets",
         Element: (
           <PrivateRoute>
-            <AllTickets />,
+            <AllTickets />
           </PrivateRoute>
         ),
       },
@@ -79,8 +81,12 @@ export const router = createBrowserRouter([
         Component: Rangpur,
       },
       {
-        path: "/booking",
+        path: "tickets/booking",
         Component: Booking,
+      },
+      {
+        path: "tickets/success",
+        Element: <Success />,
       },
 
       {
@@ -93,7 +99,7 @@ export const router = createBrowserRouter([
         children: [
           // ===== USER =====
           { path: "user-profile", element: <UserProfile /> },
-          { path: "booked-tickets", element: <MyBookedTickets /> },
+          { path: "booked-tickets", element: <BookedTickets /> },
           { path: "transactions", element: <TransactionHistory /> },
 
           // ===== VENDOR =====

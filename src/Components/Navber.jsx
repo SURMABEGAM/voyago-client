@@ -98,11 +98,6 @@ const Navbar = () => {
             ) : (
               <>
                 <li>
-                  <NavLink to="/userprofie" className={navLinkClass}>
-                    My Profile
-                  </NavLink>
-                </li>
-                <li>
                   <button
                     onClick={handleLogout}
                     className="text-red-500 font-semibold"
@@ -201,11 +196,6 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-40 border border-orange-400"
             >
-              <li>
-                <NavLink to="/profile" className={navLinkClass}>
-                  Profile
-                </NavLink>
-              </li>
               <li>
                 <button
                   onClick={handleLogout}

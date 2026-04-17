@@ -11,8 +11,7 @@ import Sylhet from "../ticket/Sylhet";
 import Rajshahi from "../ticket/Rajshahi";
 import Khulna from "../ticket/Khulna";
 import Rangpur from "../ticket/Rangpur";
-import Booking from "../ticket/Booking";
-import UserProfile from "../dashboard/UserProfile";
+
 import DashboardLayout from "../layout/DashboardLayout";
 
 import TransactionHistory from "../dashboard/TransactionHistory";
@@ -32,7 +31,9 @@ import ManageTickets from "../dashboard/adminProfile/ManageTickets";
 import ManageUsers from "../dashboard/adminProfile/ManageUsers";
 import AdvertiseTickets from "../dashboard/adminProfile/AdvertiseTickets";
 import BookedTickets from "../dashboard/BookedTickets";
-import Success from "../ticket/Success";
+import Booking from "../dashboard/Booking";
+import Success from "../stripe/Success";
+import UserProfile from "../dashboard/UserProfile";
 
 export const router = createBrowserRouter([
   {
@@ -80,14 +81,6 @@ export const router = createBrowserRouter([
         path: "tickets/rangpur",
         Component: Rangpur,
       },
-      {
-        path: "tickets/booking",
-        Component: Booking,
-      },
-      {
-        path: "tickets/success",
-        Element: <Success />,
-      },
 
       {
         path: "/dashboard",
@@ -101,6 +94,7 @@ export const router = createBrowserRouter([
           { path: "user-profile", element: <UserProfile /> },
           { path: "booked-tickets", element: <BookedTickets /> },
           { path: "transactions", element: <TransactionHistory /> },
+          { path: "booking/:email", element: <Booking /> },
 
           // ===== VENDOR =====
           {
@@ -141,6 +135,10 @@ export const router = createBrowserRouter([
       {
         path: "/register",
         Component: Register,
+      },
+      {
+        path: "success",
+        Component: Success,
       },
     ],
   },

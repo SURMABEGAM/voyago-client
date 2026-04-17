@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
@@ -8,7 +8,7 @@ import { AuthContext } from "../Context/Authcontext";
 const Chittagong = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
-
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const axiosSecure = UseAxiosSecure();
   useEffect(() => {
@@ -30,17 +30,41 @@ const Chittagong = () => {
   };
 
   const handleBook = (bus) => {
+    if (!user) {
+      return Swal.fire("Error", "Please login to book a ticket", "error");
+    }
+
+    const bookingData = {
+      busId: bus._id,
+      title: bus.title,
+      price: bus.price,
+      bookingDate: new Date(),
+      status: "pending",
+    };
+
     Swal.fire({
-      title: "Proceed to Booking?",
+      title: "Proceed to Payment?",
       text: `Booking for ${bus.title} (BDT ${bus.price})`,
       icon: "info",
       showCancelButton: true,
-      confirmButtonText: "Yes, Continue",
+      confirmButtonText: "Yes, Book Now",
+      cancelButtonText: "No, Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate("/booking", {
-          state: { bus },
-        });
+        axiosSecure
+          .post("/api/booking", bookingData) // backend bookings route
+          .then((res) => {
+            if (res.data.insertedId) {
+              Swal.fire("Success!", "Your ticket has been booked.", "success");
+
+              navigate("/tickets/booking", { state: { bus } }); // Pass bus data to booking page
+              setSelectedBus(null); // close modal after booking
+            }
+          })
+          .catch((error) => console.error("Error booking ticket:", error));
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire("Cancelled", "Your booking was not completed", "info");
+        navigate("/");
       }
     });
   };
@@ -115,7 +139,9 @@ const Chittagong = () => {
 
           <div className="modal modal-open">
             <div className="modal-box max-w-md">
-              <h3 className="font-bold text-lg mb-2">{selectedBus.title}</h3>
+              <h3 className="font-bold text-lg text-indigo-600 mb-2">
+                {selectedBus.title}
+              </h3>
 
               <img
                 src={selectedBus.image}
@@ -124,20 +150,24 @@ const Chittagong = () => {
               />
 
               <p>
-                <b>From:</b> {selectedBus.from}
+                <b className="text-shadow-zinc-950-content">From:</b>{" "}
+                {selectedBus.from}
               </p>
               <p>
-                <b>To:</b> {selectedBus.to}
+                <b className="text-shadow-zinc-950-content">To:</b>{" "}
+                {selectedBus.to}
               </p>
               <p>
-                <b>Price:</b> BDT {selectedBus.price}
+                <b className="text-shadow-zinc-950-content">Price:</b> BDT{" "}
+                {selectedBus.price}
               </p>
               <p>
-                <b>Seats:</b> {selectedBus.quantity}
+                <b className="text-shadow-zinc-950-content">Seats:</b>{" "}
+                {selectedBus.quantity}
               </p>
               <p>
-                <b>Departure:</b> {selectedBus.departureDate} at{" "}
-                {selectedBus.departureTime}
+                <b className="text-shadow-zinc-950-content">Departure:</b>{" "}
+                {selectedBus.departureDate} at {selectedBus.departureTime}
               </p>
 
               <div className="flex flex-wrap gap-1 mt-2">
@@ -159,13 +189,13 @@ const Chittagong = () => {
                 {selectedBus.quantity > 0 &&
                 isBookable(selectedBus.departureDate) ? (
                   <button
-                    className="btn btn-success"
+                    className="btn btn-success btn-secondary"
                     onClick={() => handleBook(selectedBus)}
                   >
                     Book Now
                   </button>
                 ) : (
-                  <span className="text-error font-semibold">
+                  <span className="text-error text-red-500 font-semibold">
                     Booking Not Available
                   </span>
                 )}

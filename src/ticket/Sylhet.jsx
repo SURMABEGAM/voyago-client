@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { AuthContext } from "../Context/Authcontext";
 import UseAxiosSecure from "../hooks/UseAxiosSecure";
+import { useNavigate } from "react-router";
 
 const Sylhet = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const axiosSecure = UseAxiosSecure();
   const { user } = useContext(AuthContext);
-
+  const navigate = useNavigate();
   useEffect(() => {
     axiosSecure
       .get("/api/tickets")
@@ -30,8 +31,9 @@ const Sylhet = () => {
     if (!user) {
       return Swal.fire("Error", "Please login to book a ticket", "error");
     }
+
     const bookingData = {
-      busId: bus._id, // MongoDB তে সাধারণত _id থাকে
+      busId: bus._id,
       title: bus.title,
       price: bus.price,
       bookingDate: new Date(),
@@ -44,20 +46,27 @@ const Sylhet = () => {
       icon: "info",
       showCancelButton: true,
       confirmButtonText: "Yes, Book Now",
+      cancelButtonText: "No, Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         axiosSecure
-          .post("/api/bookings", bookingData)
+          .post("/api/booking", bookingData) // backend bookings route
           .then((res) => {
             if (res.data.insertedId) {
               Swal.fire("Success!", "Your ticket has been booked.", "success");
-              setSelectedBus(null); // বুকিং সফল হলে মডাল বন্ধ হবে
+
+              navigate("/dashboard/booking", { state: { bus } }); // Pass bus data to booking page
+              setSelectedBus(null); // close modal after booking
             }
           })
           .catch((error) => console.error("Error booking ticket:", error));
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire("Cancelled", "Your booking was not completed", "info");
+        navigate("/");
       }
     });
   };
+
   return (
     <div className="p-10 mt-10">
       {" "}

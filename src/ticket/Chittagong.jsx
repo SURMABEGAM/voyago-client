@@ -57,7 +57,7 @@ const Chittagong = () => {
             if (res.data.insertedId) {
               Swal.fire("Success!", "Your ticket has been booked.", "success");
 
-              navigate("/tickets/booking", { state: { bus } }); // Pass bus data to booking page
+              navigate("/dashboard/booking", { state: { bus } }); // Pass bus data to booking page
               setSelectedBus(null); // close modal after booking
             }
           })

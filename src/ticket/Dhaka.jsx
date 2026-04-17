@@ -55,7 +55,7 @@ const Dhaka = () => {
             if (res.data.insertedId) {
               Swal.fire("Success!", "Your ticket has been booked.", "success");
 
-              navigate("/tickets/booking", { state: { bus } }); // Pass bus data to booking page
+              navigate("/dashboard/booking", { state: { bus } }); // Pass bus data to booking page
               setSelectedBus(null); // close modal after booking
             }
           })
@@ -115,12 +115,14 @@ const Dhaka = () => {
             >
               X
             </button>
-            <h2 className="text-xl font-bold mb-2">{selectedBus.title}</h2>
-            <p>
+            <h2 className="text-xl text-amber-700 font-bold mb-2">
+              {selectedBus.title}
+            </h2>
+            <p className="mb-1 text-black">
               From: {selectedBus.from} → To: {selectedBus.to}
             </p>
-            <p>Price: BDT {selectedBus.price}</p>
-            <p>
+            <p className="mb-1 text-black">Price: BDT {selectedBus.price}</p>
+            <p className="mb-1 text-black">
               Departure:{" "}
               {selectedBus.departureDate
                 ? new Date(selectedBus.departureDate).toLocaleString()

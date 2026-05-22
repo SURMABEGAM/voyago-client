@@ -5,29 +5,19 @@ const ManuVendor = () => {
   return (
     <ul className="space-y-3">
       <li>
-        <NavLink to="/dashboard/vendor-dashboard/vendor-profile">
-          Vendor Profile
-        </NavLink>
+        <NavLink to="/dashboar/vendor">Vendor Profile</NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/vendor-dashboard/add-ticket">
-          Add Ticket
-        </NavLink>
+        <NavLink to="/dashboard/add-ticket">Add Ticket</NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/vendor-dashboard/my-tickets">
-          My Added Tickets
-        </NavLink>
+        <NavLink to="/dashboard/my-tickets">My Added Tickets</NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/vendor-dashboard/requested-bookings">
-          Requested Bookings
-        </NavLink>
+        <NavLink to="/dashboard/requested-bookings">Requested Bookings</NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/vendor-dashboard/revenue">
-          Revenue Overview
-        </NavLink>
+        <NavLink to="/dashboard/revenue">Revenue Overview</NavLink>
       </li>
     </ul>
   );

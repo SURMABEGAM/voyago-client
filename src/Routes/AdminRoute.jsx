@@ -10,8 +10,10 @@ const AdminRoute = ({ children }) => {
   if (loading) {
     return <span className="loading loading-spinner loading-lg"></span>;
   }
-
-  if (!user || role !== "admin") {
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+  if (role !== "admin") {
     return <Navigate to="/" replace />;
   }
 

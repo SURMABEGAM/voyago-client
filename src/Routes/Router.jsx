@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import Root from "./Root";
+import AdminRoute from "./AdminRoute";
+import VendorRoute from "./VendorRoute.jsx";
 import Error from "../error/Error";
 import Home from "../Pages/Home";
 import Login from "../user/Login";
@@ -12,28 +14,28 @@ import Rajshahi from "../ticket/Rajshahi";
 import Khulna from "../ticket/Khulna";
 import Rangpur from "../ticket/Rangpur";
 
-import DashboardLayout from "../layout/DashboardLayout";
-
-import TransactionHistory from "../dashboard/TransactionHistory";
-
 import PrivateRoute from "./PrivateRoute";
-import VendorProfile from "../dashboard/vendorDashboard/VendorProfile";
-import ManuVendor from "../dashboard/vendorDashboard/ManuVendor";
+import TransactionHistory from "../dashboard/userDashborad/TransactionHistory";
+import UserProfile from "../dashboard/userDashborad/UserProfile";
+import BookedTickets from "../dashboard/userDashborad/BookedTickets";
 
-import AddTicket from "../dashboard/vendorDashboard/AddTicket";
-import MyAddedTickets from "../dashboard/vendorDashboard/MyAddedTickets";
-
-import VendorRoute from "./VendorRoute";
-import AdminRoute from "./AdminRoute";
-import ManuAdmin from "../dashboard/adminProfile/ManuAdmin";
-import AdminProfile from "../dashboard/adminProfile/AdminProfile";
-import ManageTickets from "../dashboard/adminProfile/ManageTickets";
-import ManageUsers from "../dashboard/adminProfile/ManageUsers";
-import AdvertiseTickets from "../dashboard/adminProfile/AdvertiseTickets";
-import BookedTickets from "../dashboard/BookedTickets";
-import Booking from "../dashboard/Booking";
-import Success from "../stripe/Success";
-import UserProfile from "../dashboard/UserProfile";
+import AdminProfile from "../dashboard/adminDashborad/AdminProfile";
+import ManageUsers from "../dashboard/adminDashborad/ManageUsers";
+import ManageTickets from "../dashboard/adminDashborad/ManageTickets";
+import AdminPayments from "../dashboard/adminDashborad/AdminPayments.jsx";
+import AdvertiseTickets from "../dashboard/adminDashborad/AdvertiseTickets.jsx";
+import ManageAdmin from "../dashboard/adminDashborad/ManuAdmin";
+import VendorProfile from "../dashboard/vendorDashboard/VendorProfile.jsx";
+import ManuVendor from "../dashboard/vendorDashboard/ManuVendor.jsx";
+import AddTicket from "../dashboard/vendorDashboard/AddTicket.jsx";
+import MyAddedTickets from "../dashboard/vendorDashboard/MyAddedTickets.jsx";
+import RequestedBookings from "../dashboard/vendorDashboard/RequestedBookings.jsx";
+import RevenueOverview from "../dashboard/vendorDashboard/RevenueOverview.jsx";
+import Success from "../stripe/Success.jsx";
+import Cancel from "../stripe/Cancel.jsx";
+import DashboardLayout from "../layout/DashboardLayout";
+import Dashboard from "../Pages/Dashboard";
+import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
 
 export const router = createBrowserRouter([
   {
@@ -47,7 +49,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "tickets",
-        Element: (
+        element: (
           <PrivateRoute>
             <AllTickets />
           </PrivateRoute>
@@ -90,44 +92,36 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
         children: [
-          // ===== USER =====
-          { path: "user-profile", element: <UserProfile /> },
-          { path: "booked-tickets", element: <BookedTickets /> },
-          { path: "transactions", element: <TransactionHistory /> },
-          { path: "booking/:email", element: <Booking /> },
+          // 1. Common Dashboard Home
+          { index: true, element: <Dashboard /> },
 
-          // ===== VENDOR =====
+          // 2. User Routes
+          { path: "profile", element: <UserProfile /> },
+          { path: "bookings", element: <BookedTickets /> },
+          { path: "history", element: <TransactionHistory /> },
+
+          // 3. Admin Routes (adminDashborad folder থেকে)
+          { path: "admin-profile", element: <AdminProfile /> },
+          { path: "manage-users", element: <ManageUsers /> },
+          { path: "manage-tickets", element: <ManageTickets /> },
+          { path: "admin-payments", element: <AdminPayments /> },
+          { path: "manu-admin", element: <ManuAdmin /> },
+          { path: "advertise-tickets", element: <AdvertiseTickets /> },
+
           {
-            path: "vendor-profile",
-            element: (
-              <VendorRoute>
-                <VendorProfile />
-              </VendorRoute>
-            ),
+            path: "vendor-dashboard",
             children: [
+              { path: "vendor", element: <VendorProfile /> },
               { path: "manu-vendor", element: <ManuVendor /> },
               { path: "add-ticket", element: <AddTicket /> },
               { path: "my-tickets", element: <MyAddedTickets /> },
-            ],
-          },
-
-          // ===== ADMIN =====
-          {
-            path: "admin-profile",
-            element: (
-              <AdminRoute>
-                <AdminProfile />
-              </AdminRoute>
-            ),
-            children: [
-              { path: "manu-admin", element: <ManuAdmin /> },
-              { path: "manage-tickets", element: <ManageTickets /> },
-              { path: "manage-users", element: <ManageUsers /> },
-              { path: "advertise", element: <AdvertiseTickets /> },
+              { path: "requested-bookings", element: <RequestedBookings /> },
+              { path: "revenue", element: <RevenueOverview /> },
             ],
           },
         ],
       },
+
       {
         path: "/login",
         Component: Login,
@@ -136,9 +130,14 @@ export const router = createBrowserRouter([
         path: "/register",
         Component: Register,
       },
+
       {
-        path: "success",
-        Component: Success,
+        path: "/stripe/success",
+        element: <Success />,
+      },
+      {
+        path: "/stripe/cancel",
+        element: <Cancel />,
       },
     ],
   },

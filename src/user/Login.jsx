@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { AuthContext } from "../Context/Authcontext";
 
 import { useForm } from "react-hook-form";
 import loginImg from "../assets/Login.jpg";
 import { Link, useLocation, useNavigate } from "react-router";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { AuthContext } from "../Context/Authcontext";
 
 const Login = () => {
   const { googleLogin, resetPassword, setUser, setLoading, signInUser } =
@@ -62,10 +62,20 @@ const Login = () => {
       }
     } catch (err) {
       console.error("REAL ERROR:", err);
+
+      let errorMessage = "Something went wrong!";
+
+      if (err.code === "auth/invalid-credential") {
+        errorMessage = "ভুল ইমেইল অথবা পাসওয়ার্ড দিয়েছেন। আবার চেষ্টা করুন।";
+      } else if (err.code === "auth/user-not-found") {
+        errorMessage = "এই ইমেইলে কোনো অ্যাকাউন্ট নেই।";
+      } else if (err.code === "auth/wrong-password") {
+        errorMessage = "আপনার পাসওয়ার্ডটি ভুল।";
+      }
       Swal.fire({
         icon: "error",
         title: "Login Failed",
-        text: err.response?.data?.message || err.message,
+        text: err.response?.data?.message || errorMessage,
       });
       setLoading(false);
     }

@@ -56,8 +56,9 @@ const Khulna = () => {
             if (res.data.insertedId) {
               Swal.fire("Success!", "Your ticket has been booked.", "success");
 
-              navigate("/dashboard/booking", { state: { bus } }); // Pass bus data to booking page
+              navigate(`/dashboard/booking/${user.email}`, { state: { bus } }); // Pass bus data to booking page
               setSelectedBus(null); // close modal after booking
+              console.log(`/dashboard/booking/${user.email}`);
             }
           })
           .catch((error) => console.error("Error booking ticket:", error));

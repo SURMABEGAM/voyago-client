@@ -3,9 +3,10 @@ import { HiMenuAlt3 } from "react-icons/hi";
 
 import { useContext } from "react";
 import { AuthContext } from "../Context/Authcontext";
-import ManuAdmin from "../dashboard/adminProfile/ManuAdmin";
+import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
 import ManuVendor from "../dashboard/vendorDashboard/ManuVendor";
-import ManuUser from "../dashboard/ManuUser";
+import ManuUser from "../dashboard/userDashborad/ManuUser";
+
 const DashboardLayout = () => {
   const { user, role, roleLoading } = useContext(AuthContext);
 

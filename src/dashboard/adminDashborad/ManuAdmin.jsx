@@ -8,15 +8,13 @@ const ManuAdmin = () => {
         <NavLink to="/dashboard/admin-profile">Admin Profile</NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/admin-profile/manage-tickets">
-          Manage Tickets
-        </NavLink>
+        <NavLink to="/dashboard/manage-tickets">Manage Tickets</NavLink>
       </li>
       <li>
         <NavLink to="/dashboard/manage-users">Manage Users</NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/advertise">Advertise Tickets</NavLink>
+        <NavLink to="/dashboard/advertise-tickets">Advertise Tickets</NavLink>
       </li>
     </ul>
   );

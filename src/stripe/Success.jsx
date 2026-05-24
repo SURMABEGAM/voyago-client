@@ -12,6 +12,14 @@ const Success = () => {
       });
     }
   }, [sessionId]);
+
+  useEffect(() => {
+    if (sessionId) {
+      axios.post("http://localhost:5000/api/confirm-booking", {
+        sessionId,
+      });
+    }
+  }, [sessionId]);
   return (
     <div className="text-center mt-20">
       <h1 className="text-3xl font-bold text-green-600">

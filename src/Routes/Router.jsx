@@ -111,8 +111,8 @@ export const router = createBrowserRouter([
           {
             path: "vendor-dashboard",
             children: [
-              { path: "vendor", element: <VendorProfile /> },
-              { path: "manu-vendor", element: <ManuVendor /> },
+              { path: "vendor-profile", element: <VendorProfile /> },
+              { path: "manage-vendor", element: <ManuVendor /> },
               { path: "add-ticket", element: <AddTicket /> },
               { path: "my-tickets", element: <MyAddedTickets /> },
               { path: "requested-bookings", element: <RequestedBookings /> },

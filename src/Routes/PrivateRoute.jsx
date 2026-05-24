@@ -12,7 +12,6 @@ const PrivateRoute = ({ children }) => {
     return <Loading />;
   }
 
-  // user না থাকলে login এ পাঠাবে
   if (!user) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }

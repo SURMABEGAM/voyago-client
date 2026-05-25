@@ -1,10 +1,18 @@
 import { useForm } from "react-hook-form";
-
 import { useContext } from "react";
-
 import Swal from "sweetalert2";
 import UseAxiosSecure from "../../hooks/UseAxiosSecure";
 import { AuthContext } from "../../Context/Authcontext";
+
+import {
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaBus,
+  FaClock,
+  FaCalendarAlt,
+  FaWifi,
+  FaSnowflake,
+} from "react-icons/fa";
 
 const AddTicket = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -12,7 +20,6 @@ const AddTicket = () => {
   const { user } = useContext(AuthContext);
 
   const onSubmit = async (data) => {
-    // এখানে ইমেজ আপলোড লজিক (ImgBB) হবে, আপাতত ডাটা সরাসরি পাঠানো হচ্ছে
     const ticketInfo = {
       ...data,
       price: parseFloat(data.price),
@@ -22,82 +29,220 @@ const AddTicket = () => {
     };
 
     const res = await axiosSecure.post("/api/tickets", ticketInfo);
+
     if (res.data.insertedId) {
-      Swal.fire("Success", "Ticket added and pending for approval", "success");
+      Swal.fire({
+        title: "Success!",
+        text: "Ticket added successfully & pending for approval",
+        icon: "success",
+        confirmButtonColor: "#2563eb",
+      });
+
       reset();
     }
   };
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
-      <h2 className="text-2xl font-bold mb-5">Add New Ticket</h2>
+    <div className="flex-1 bg-white">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-700 px-10 py-8 text-white">
+        <h2 className="text-5xl font-bold">Add New Ticket</h2>
+
+        <p className="mt-3 text-blue-100 text-lg">
+          Create your transport ticket with modern details
+        </p>
+      </div>
+
+      {/* Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-2 gap-4 bg-white p-6 rounded shadow"
+        className="grid md:grid-cols-2 gap-8 p-10"
       >
-        <input
-          {...register("title")}
-          placeholder="Ticket Title"
-          className="input border-gray-300 p-2 border"
-          required
-        />
-        <input
-          {...register("from")}
-          placeholder="From (Location)"
-          className="input border-gray-300 p-2 border"
-          required
-        />
-        <input
-          {...register("to")}
-          placeholder="To (Location)"
-          className="input border-gray-300 p-2 border"
-          required
-        />
-        <input
-          {...register("price")}
-          type="number"
-          placeholder="Price per unit"
-          className="input border-gray-300 p-2 border"
-          required
-        />
-        <input
-          {...register("quantity")}
-          type="number"
-          placeholder="Ticket Quantity"
-          className="input border-gray-300 p-2 border"
-          required
-        />
-        <input
-          {...register("departureDate")}
-          type="date"
-          className="input border-gray-300 p-2 border"
-          required
-        />
-        <input
-          {...register("departureTime")}
-          type="time"
-          className="input border-gray-300 p-2 border"
-          required
-        />
+        {/* Ticket Title */}
+        <div>
+          <label className="block text-slate-800 font-bold mb-3">
+            Ticket Title
+          </label>
 
-        {/* Perks Checkboxes */}
-        <div className="col-span-2">
-          <p className="font-semibold">Perks:</p>
-          <label className="mr-4">
-            <input type="checkbox" {...register("perks")} value="AC" /> AC
-          </label>
-          <label className="mr-4">
-            <input type="checkbox" {...register("perks")} value="WiFi" /> WiFi
-          </label>
-          <label>
-            <input type="checkbox" {...register("perks")} value="Snacks" />{" "}
-            Snacks
-          </label>
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-blue-500">
+            <FaBus className="text-blue-600 text-xl" />
+
+            <input
+              {...register("title")}
+              type="text"
+              placeholder="Dhaka to Sylhet AC Bus"
+              className="w-full py-4 bg-transparent outline-none text-slate-800 placeholder:text-slate-500"
+            />
+          </div>
         </div>
 
+        {/* From */}
+        <div>
+          <label className="block text-slate-800 font-bold mb-3">From</label>
+
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-red-400">
+            <FaMapMarkerAlt className="text-red-500 text-xl" />
+
+            <input
+              {...register("from")}
+              type="text"
+              placeholder="Departure Location"
+              className="w-full py-4 bg-transparent outline-none text-slate-800 placeholder:text-slate-500"
+            />
+          </div>
+        </div>
+
+        {/* To */}
+        <div>
+          <label className="block text-slate-800 font-bold mb-3">To</label>
+
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-green-400">
+            <FaMapMarkerAlt className="text-green-500 text-xl" />
+
+            <input
+              {...register("to")}
+              type="text"
+              placeholder="Destination"
+              className="w-full py-4 bg-transparent outline-none text-slate-800 placeholder:text-slate-500"
+            />
+          </div>
+        </div>
+
+        {/* Price */}
+        <div>
+          <label className="block text-slate-800 font-bold mb-3">Price</label>
+
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-yellow-400">
+            <FaMoneyBillWave className="text-yellow-500 text-xl" />
+
+            <input
+              {...register("price")}
+              type="number"
+              placeholder="Price per ticket"
+              className="w-full py-4 bg-transparent outline-none text-slate-800 placeholder:text-slate-500"
+            />
+          </div>
+        </div>
+
+        {/* Quantity */}
+        <div>
+          <label className="block text-slate-800 font-bold mb-3">
+            Ticket Quantity
+          </label>
+
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-indigo-400">
+            <FaBus className="text-indigo-500 text-xl" />
+
+            <input
+              {...register("quantity")}
+              type="number"
+              placeholder="Available Seats"
+              className="w-full py-4 bg-transparent outline-none text-slate-800 placeholder:text-slate-500"
+            />
+          </div>
+        </div>
+
+        {/* Date */}
+        <div>
+          <label className="block text-slate-800 font-bold mb-3">
+            Departure Date
+          </label>
+
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-pink-400">
+            <FaCalendarAlt className="text-pink-500 text-xl" />
+
+            <input
+              {...register("departureDate")}
+              type="date"
+              className="w-full py-4 bg-transparent outline-none text-slate-800 placeholder:text-slate-500"
+            />
+          </div>
+        </div>
+
+        {/* Time */}
+        <div>
+          <label className="block text-slate-800 font-bold mb-3">
+            Departure Time
+          </label>
+
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-cyan-400">
+            <FaClock className="text-cyan-500 text-xl" />
+
+            <input
+              {...register("departureTime")}
+              type="time"
+              placeholder="Select departure time"
+              className="w-full py-4 bg-transparent outline-none text-slate-800 placeholder:text-slate-500"
+            />
+          </div>
+        </div>
+
+        {/* Vendor Email */}
+        <div>
+          <label className="block text-slate-800 font-bold mb-3">
+            Vendor Email
+          </label>
+
+          <input
+            type="text"
+            value={user?.email || ""}
+            readOnly
+            className="w-full py-4 px-4 border border-slate-200 rounded-2xl bg-slate-100 text-slate-600"
+          />
+        </div>
+
+        {/* Perks */}
+        <div className="md:col-span-2">
+          <label className="block text-slate-800 font-bold mb-4 text-xl">
+            Ticket Perks
+          </label>
+
+          <div className="flex flex-wrap gap-5">
+            <label className="flex items-center gap-3 px-5 py-4 rounded-2xl bg-blue-50 border hover:to-black">
+              <input
+                type="checkbox"
+                {...register("perks")}
+                value="AC"
+                className="checkbox checkbox-primary"
+              />
+
+              <FaSnowflake className="text-blue-600" />
+
+              <span className="font-semibold text-slate-700">AC</span>
+            </label>
+
+            <label className="flex items-center gap-3 px-5 py-4 rounded-2xl bg-green-50 border hover:shadow-lg transition">
+              <input
+                type="checkbox"
+                {...register("perks")}
+                value="WiFi"
+                className="checkbox checkbox-success"
+              />
+
+              <FaWifi className="text-green-500" />
+
+              <span className="font-semibold text-slate-700">WiFi</span>
+            </label>
+
+            <label className="flex items-center gap-3 px-5 py-4 rounded-2xl bg-orange-50 border hover:shadow-lg transition">
+              <input
+                type="checkbox"
+                {...register("perks")}
+                value="Snacks"
+                className="checkbox checkbox-warning"
+              />
+
+              <span className="text-xl">🍔</span>
+
+              <span className="font-semibold text-slate-700">Snacks</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Button */}
         <button
           type="submit"
-          className="btn bg-blue-600 text-white p-2 rounded col-span-2"
+          className="md:col-span-2 py-5 rounded-2xl text-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-700 hover:scale-[1.02] transition-all duration-300 shadow-xl"
         >
           Add Ticket
         </button>

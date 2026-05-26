@@ -23,7 +23,7 @@ import AdminProfile from "../dashboard/adminDashborad/AdminProfile";
 import ManageUsers from "../dashboard/adminDashborad/ManageUsers";
 import ManageTickets from "../dashboard/adminDashborad/ManageTickets";
 import AdminPayments from "../dashboard/adminDashborad/AdminPayments.jsx";
-import AdvertiseTickets from "../dashboard/adminDashborad/AdvertiseTickets.jsx";
+
 import ManageAdmin from "../dashboard/adminDashborad/ManuAdmin";
 import VendorProfile from "../dashboard/vendorDashboard/VendorProfile.jsx";
 import ManuVendor from "../dashboard/vendorDashboard/ManuVendor.jsx";
@@ -106,7 +106,6 @@ export const router = createBrowserRouter([
           { path: "manage-tickets", element: <ManageTickets /> },
           { path: "admin-payments", element: <AdminPayments /> },
           { path: "manu-admin", element: <ManuAdmin /> },
-          { path: "advertise-tickets", element: <AdvertiseTickets /> },
 
           {
             path: "vendor-dashboard",

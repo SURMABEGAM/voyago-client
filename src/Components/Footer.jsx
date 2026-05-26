@@ -1,56 +1,75 @@
 import { Link } from "react-router";
+import {
+  FaFacebook,
+  FaEnvelope,
+  FaPhoneAlt,
+  FaBus,
+  FaCreditCard,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300">
-      {/* Top Footer */}
-      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {/* Column 1: Logo & Description */}
+    <footer className="bg-slate-900 text-slate-300">
+      {/* Top Section */}
+      <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        {/* Brand */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-3">TicketBari</h2>
-          <p className="text-sm leading-relaxed">
-            Book bus, train, launch & flight tickets easily with TicketBari.
-            Safe, fast & reliable ticket booking platform.
+          <h2 className="text-3xl font-extrabold text-white flex items-center gap-2">
+            <FaBus className="text-blue-500" />
+            Voyago
+          </h2>
+
+          <p className="text-sm mt-4 leading-relaxed text-slate-400">
+            Book bus tickets easily with Voyago. Fast, secure and reliable
+            travel booking platform in Bangladesh.
           </p>
         </div>
 
-        {/* Column 2: Quick Links */}
+        {/* Quick Links */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
-          <ul className="space-y-2 text-sm">
+          <h3 className="text-lg font-bold text-white mb-4">Quick Links</h3>
+
+          <ul className="space-y-3 text-sm">
             <li>
-              <Link to="/" className="hover:text-white">
+              <Link className="hover:text-white" to="/">
                 Home
               </Link>
             </li>
             <li>
-              <Link to="/tickets" className="hover:text-white">
-                All Tickets
+              <Link className="hover:text-white" to="/tickets">
+                Tickets
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-white">
+              <Link className="hover:text-white" to="/about">
                 About
               </Link>
             </li>
             <li>
-              <Link to="/contact" className="hover:text-white">
-                Contact Us
+              <Link className="hover:text-white" to="/contact">
+                Contact
               </Link>
             </li>
           </ul>
         </div>
 
-        {/* Column 3: Contact Info */}
+        {/* Contact */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Contact Info
-          </h3>
-          <ul className="space-y-2 text-sm">
-            <li>Email: support@ticketbari.com</li>
-            <li>Phone: +880 1234-567890</li>
-            <li>
-              Facebook:{" "}
+          <h3 className="text-lg font-bold text-white mb-4">Contact</h3>
+
+          <ul className="space-y-3 text-sm">
+            <li className="flex items-center gap-2">
+              <FaEnvelope className="text-blue-400" />
+              support@ticketbari.com
+            </li>
+
+            <li className="flex items-center gap-2">
+              <FaPhoneAlt className="text-green-400" />
+              +880 1234-567890
+            </li>
+
+            <li className="flex items-center gap-2">
+              <FaFacebook className="text-blue-500" />
               <a
                 href="https://facebook.com"
                 target="_blank"
@@ -62,20 +81,27 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Column 4: Payment Methods */}
+        {/* Payment */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Payment Methods
-          </h3>
-          <div className="flex items-center gap-3">
-            <span className="text-sm">Stripe</span>
+          <h3 className="text-lg font-bold text-white mb-4">Payment Methods</h3>
+
+          <div className="flex flex-col gap-3 text-sm">
+            <div className="flex items-center gap-2">
+              <FaCreditCard className="text-purple-400" />
+              Stripe
+            </div>
+
+            <div className="flex items-center gap-2">
+              <FaCreditCard className="text-pink-400" />
+              bKash (Coming Soon)
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-700 text-center py-4 text-sm">
-        © 2025 <span className="font-semibold text-white">TicketBari</span>. All
+      {/* Bottom */}
+      <div className="border-t border-slate-700 text-center py-5 text-sm text-slate-400">
+        © 2026 <span className="text-white font-semibold">Voyago</span>. All
         rights reserved.
       </div>
     </footer>

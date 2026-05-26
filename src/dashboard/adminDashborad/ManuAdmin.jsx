@@ -14,7 +14,7 @@ const ManuAdmin = () => {
         <NavLink to="/dashboard/manage-users">Manage Users</NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/advertise-tickets">Advertise Tickets</NavLink>
+        <NavLink to="/dashboard/admin-payments">Admin Payments</NavLink>
       </li>
     </ul>
   );

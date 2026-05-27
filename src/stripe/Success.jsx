@@ -7,15 +7,18 @@ const Success = () => {
   const sessionId = query.get("session_id");
   useEffect(() => {
     if (sessionId) {
-      axios.post("http://localhost:5000/save-transaction", {
-        sessionId,
-      });
+      axios.post(
+        "https://voyago-server-theta.vercel.app/api/save-transaction",
+        {
+          sessionId,
+        },
+      );
     }
   }, [sessionId]);
 
   useEffect(() => {
     if (sessionId) {
-      axios.post("http://localhost:5000/api/confirm-booking", {
+      axios.post("https://voyago-server-theta.vercel.app/api/confirm-booking", {
         sessionId,
       });
     }

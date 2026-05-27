@@ -33,7 +33,7 @@ const Dhaka = () => {
   const handlePayment = async (bus) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/create-checkout-session",
+        "https://voyago-server-theta.vercel.app/api/create-checkout-session",
         {
           ticketId: bus._id,
           email: user.email,
@@ -52,7 +52,7 @@ const Dhaka = () => {
     <>
       {/* ================= ALL CARDS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
-        {tickets.slice(5, 12).map((bus) => (
+        {tickets.slice(0, 6).map((bus) => (
           <div
             key={bus.id}
             className={`card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border border-base-200 overflow-hidden ${

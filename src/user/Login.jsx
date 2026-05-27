@@ -27,7 +27,10 @@ const Login = () => {
     try {
       const userCredential = await signInUser(data.email, data.password);
       console.log("Firebase login successful:", userCredential);
-      const res = await axios.post("http://localhost:5000/api/login", data);
+      const res = await axios.post(
+        "https://voyago-server-theta.vercel.app/api/login",
+        data,
+      );
       console.log("API Success:", res.data);
 
       localStorage.setItem("access-token", res.data.token);

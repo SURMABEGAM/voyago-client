@@ -2,7 +2,7 @@ import axios from "axios";
 
 const UseAxiosSecure = () => {
   const instance = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: "https://voyago-server-theta.vercel.app/",
   });
 
   instance.interceptors.request.use((config) => {

@@ -21,11 +21,14 @@ const AdminPayments = () => {
 
         const token = localStorage.getItem("access-token");
 
-        const res = await fetch("http://localhost:5000/api/admin/payments", {
-          headers: {
-            authorization: `Bearer ${token}`,
+        const res = await fetch(
+          "https://voyago-server-theta.vercel.app/api/admin/payments",
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         const data = await res.json();
 

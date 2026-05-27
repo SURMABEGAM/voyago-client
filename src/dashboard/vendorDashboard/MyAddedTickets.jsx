@@ -15,7 +15,7 @@ const MyAddedTickets = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/tickets")
+      .get("https://voyago-server-theta.vercel.app/api/tickets")
       .then((res) => {
         setTickets(res.data);
       })

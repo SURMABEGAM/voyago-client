@@ -13,7 +13,7 @@ const RevenueOverview = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/revenue-overview")
+      .get("https://voyago-server-theta.vercel.app/revenue-overview")
       .then((res) => {
         setOverview(res.data);
       })

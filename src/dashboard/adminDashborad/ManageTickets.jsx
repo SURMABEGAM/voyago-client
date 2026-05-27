@@ -11,7 +11,9 @@ const ManageTickets = () => {
   // Fetch Tickets
   const fetchTickets = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/tickets");
+      const res = await axios.get(
+        "https://voyago-server-theta.vercel.app/api/tickets",
+      );
 
       setTickets(res.data || []);
     } catch (error) {
@@ -26,9 +28,12 @@ const ManageTickets = () => {
   // Handle Status
   const handleStatus = async (id, status) => {
     try {
-      await axios.patch(`http://localhost:5000/api/tickets/status/${id}`, {
-        status,
-      });
+      await axios.patch(
+        `https://voyago-server-theta.vercel.app/api/tickets/status/${id}`,
+        {
+          status,
+        },
+      );
 
       Swal.fire({
         icon: "success",

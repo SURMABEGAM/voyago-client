@@ -11,7 +11,7 @@ const BookedTickets = () => {
   useEffect(() => {
     if (user?.email) {
       axios
-        .get(`http://localhost:5000/bookings/${user.email}`)
+        .get(`https://voyago-server-theta.vercel.app/bookings/${user.email}`)
         .then((res) => {
           setTickets(res.data);
           console.log("BookedTickets - Fetched Tickets:", res.data);

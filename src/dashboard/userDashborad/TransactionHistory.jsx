@@ -9,7 +9,9 @@ const TransactionHistory = () => {
   useEffect(() => {
     if (user?.email) {
       axios
-        .get(`http://localhost:5000/transactions/${user.email}`)
+        .get(
+          `https://voyago-server-theta.vercel.app/transactions/${user.email}`,
+        )
         .then((res) => setTransactions(res.data))
         .catch((err) => console.log(err));
     }

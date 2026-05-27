@@ -21,6 +21,14 @@ const Dhaka = () => {
       .catch((err) => console.log(err));
   }, []);
 
+  const isBookable = (departureDate) => {
+    if (!departureDate) return false;
+    const today = new Date();
+    const departure = new Date(departureDate);
+    const diffDays = (departure - today) / (1000 * 60 * 60 * 24);
+    return diffDays >= 0 && diffDays <= 15;
+  };
+
   // Stripe Hosted Checkout
   const handlePayment = async (bus) => {
     try {
@@ -41,67 +49,144 @@ const Dhaka = () => {
   };
 
   return (
-    <div className="p-10 mt-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tickets.map((bus) => (
-          <div key={bus._id} className="card bg-base-100 shadow-lg">
-            <figure className="h-40">
+    <>
+      {/* ================= ALL CARDS ================= */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+        {tickets.slice(5, 12).map((bus) => (
+          <div
+            key={bus.id}
+            className={`card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border border-base-200 overflow-hidden ${
+              bus.quantity === 0 && "opacity-60 grayscale"
+            }`}
+          >
+            <figure className="h-48 overflow-hidden">
               <img
                 src={bus.image}
                 alt={bus.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </figure>
 
-            <div className="card-body">
-              <h2 className="card-title">{bus.title}</h2>
+            <div className="card-body p-5">
+              <div className="flex justify-between items-start">
+                <h2 className="card-title text-lg font-bold">{bus.title}</h2>
+                {bus.approved && (
+                  <span className="badge badge-success badge-sm text-white">
+                    Verified
+                  </span>
+                )}
+              </div>
 
-              <p>
-                {bus.from} → {bus.to}
-              </p>
+              <div className="text-sm text-base-content/70 space-y-1 my-2">
+                <p>
+                  Route:{" "}
+                  <span className="font-semibold text-base-content">
+                    {bus.from} ➔ {bus.to}
+                  </span>
+                </p>
+                <p className="text-primary font-bold text-lg">৳ {bus.price}</p>
+              </div>
 
-              <p>BDT {bus.price}</p>
+              <div className="flex flex-wrap gap-2 my-2">
+                {bus.perks.map((perk, i) => (
+                  <span key={i} className="badge badge-ghost badge-sm">
+                    {perk}
+                  </span>
+                ))}
+              </div>
 
-              <button
-                onClick={() => setSelectedBus(bus)}
-                className="btn btn-primary"
-              >
-                View Details
-              </button>
+              <div className="card-actions justify-between items-center mt-4">
+                <span
+                  className={`text-xs font-medium ${bus.quantity > 0 ? "text-green-600" : "text-red-500"}`}
+                >
+                  {bus.quantity > 0 ? `${bus.quantity} Seats Left` : "Sold Out"}
+                </span>
+                <button
+                  className="btn btn-primary btn-sm px-6"
+                  onClick={() => setSelectedBus(bus)}
+                >
+                  View Details
+                </button>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Modal */}
+      {/* ================= MODAL ================= */}
       {selectedBus && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded w-96 relative">
-            <button
-              className="absolute right-3 top-2 text-red-500"
-              onClick={() => setSelectedBus(null)}
-            >
-              X
-            </button>
+        <div className="modal modal-open backdrop-blur-sm">
+          <div className="modal-box p-0 overflow-hidden">
+            {/* Header Image */}
+            <div className="relative h-48 w-full">
+              <img
+                src={selectedBus.image}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <h3 className="absolute bottom-4 left-4 text-white font-bold text-xl">
+                {selectedBus.title}
+              </h3>
+            </div>
 
-            <h2 className="text-2xl font-bold mb-3">{selectedBus.title}</h2>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-gray-400">From</p>
+                  <p className="font-semibold">{selectedBus.from}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400">To</p>
+                  <p className="font-semibold">{selectedBus.to}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400">Departure</p>
+                  <p className="font-semibold">{selectedBus.departureDate}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400">Time</p>
+                  <p className="font-semibold">{selectedBus.departureTime}</p>
+                </div>
+              </div>
 
-            <p>
-              {selectedBus.from} → {selectedBus.to}
-            </p>
+              <div className="divider my-0"></div>
 
-            <p>Price: BDT {selectedBus.price}</p>
+              <div className="flex justify-between items-center">
+                <span className="text-2xl font-bold text-primary">
+                  ৳ {selectedBus.price}
+                </span>
+                <span className="badge badge-lg">
+                  {selectedBus.quantity} Seats Available
+                </span>
+              </div>
+            </div>
 
-            <button
-              className="btn btn-primary mt-5 w-full"
-              onClick={() => handlePayment(selectedBus)}
-            >
-              Pay with Stripe
-            </button>
+            <div className="modal-action px-6 pb-6 mt-0">
+              <button
+                className="btn btn-ghost"
+                onClick={() => setSelectedBus(null)}
+              >
+                Close
+              </button>
+
+              {selectedBus.quantity > 0 &&
+              isBookable(selectedBus.departureDate) ? (
+                <button
+                  className="btn btn-primary px-8"
+                  onClick={() => handlePayment(selectedBus)}
+                >
+                  Book Now
+                </button>
+              ) : (
+                <span className="text-red-500 font-semibold">
+                  Booking Unavailable
+                </span>
+              )}
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

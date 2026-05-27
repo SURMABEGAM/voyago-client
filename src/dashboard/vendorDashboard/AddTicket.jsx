@@ -45,7 +45,7 @@ const AddTicket = () => {
   return (
     <div className="flex-1 bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-700 px-10 py-8 text-white">
+      <div className="bg-gradient-to-r from-amber-600 to-amber-300 rounded-lg px-10 py-8 text-white">
         <h2 className="text-5xl font-bold">Add New Ticket</h2>
 
         <p className="mt-3 text-blue-100 text-lg">
@@ -64,8 +64,8 @@ const AddTicket = () => {
             Ticket Title
           </label>
 
-          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-blue-500">
-            <FaBus className="text-blue-600 text-xl" />
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-amber-500">
+            <FaBus className="text-amber-600 text-xl" />
 
             <input
               {...register("title")}
@@ -80,8 +80,8 @@ const AddTicket = () => {
         <div>
           <label className="block text-slate-800 font-bold mb-3">From</label>
 
-          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-red-400">
-            <FaMapMarkerAlt className="text-red-500 text-xl" />
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-amber-400">
+            <FaMapMarkerAlt className="text-amber-500 text-xl" />
 
             <input
               {...register("from")}
@@ -96,8 +96,8 @@ const AddTicket = () => {
         <div>
           <label className="block text-slate-800 font-bold mb-3">To</label>
 
-          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-green-400">
-            <FaMapMarkerAlt className="text-green-500 text-xl" />
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-amber-400">
+            <FaMapMarkerAlt className="text-amber-500 text-xl" />
 
             <input
               {...register("to")}
@@ -112,8 +112,8 @@ const AddTicket = () => {
         <div>
           <label className="block text-slate-800 font-bold mb-3">Price</label>
 
-          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-yellow-400">
-            <FaMoneyBillWave className="text-yellow-500 text-xl" />
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-amber-400">
+            <FaMoneyBillWave className="text-amber-500 text-xl" />
 
             <input
               {...register("price")}
@@ -130,8 +130,8 @@ const AddTicket = () => {
             Ticket Quantity
           </label>
 
-          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-indigo-400">
-            <FaBus className="text-indigo-500 text-xl" />
+          <div className="flex items-center gap-3 border border-slate-200 rounded-2xl px-4 bg-slate-50 focus-within:ring-2 ring-amber-400">
+            <FaBus className="text-amber-500 text-xl" />
 
             <input
               {...register("quantity")}
@@ -242,7 +242,7 @@ const AddTicket = () => {
         {/* Button */}
         <button
           type="submit"
-          className="md:col-span-2 py-5 rounded-2xl text-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-700 hover:scale-[1.02] transition-all duration-300 shadow-xl"
+          className="md:col-span-2 py-5 rounded-2xl text-xl font-bold text-white bg-gradient-to-r from-amber-600 to-amber-300 hover:scale-[1.02] transition-all duration-300 shadow-xl"
         >
           Add Ticket
         </button>

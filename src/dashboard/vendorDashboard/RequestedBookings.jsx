@@ -7,130 +7,242 @@ import {
   FaCheckCircle,
   FaTimesCircle,
 } from "react-icons/fa";
-
 import axios from "axios";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+});
 
 const RequestedBookings = () => {
-  const [bookings, setBookings] = useState([]);
+  const [booking, setBooking] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 10;
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/requested-bookings")
-      .then((res) => {
-        setBookings(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      .get("http://localhost:5000/api/requested-booking")
+      .then((res) => setBooking(res.data || []))
+      .catch((err) => console.log(err));
   }, []);
 
+  // pagination safe fix
+  const totalPages = Math.max(1, Math.ceil(booking.length / itemsPerPage));
+
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentBookings = booking.slice(indexOfFirst, indexOfLast);
+
+  // normalize status (IMPORTANT FIX)
+  const getStatusStyle = (status) => {
+    const s = status?.toLowerCase();
+
+    if (s === "pending") return "bg-yellow-50 text-yellow-600";
+    if (s === "approved") return "bg-green-50 text-green-600";
+    if (s === "rejected") return "bg-red-50 text-red-600";
+    if (s === "paid") return "bg-blue-50 text-blue-600";
+
+    return "bg-slate-100 text-slate-600";
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await axios.patch(
+        `http://localhost:5000/api/requested-booking/approve/${id}`,
+      );
+
+      setBooking((prev) =>
+        prev.map((b) => (b._id === id ? { ...b, status: "Approved" } : b)),
+      );
+
+      Toast.fire({ icon: "success", title: "Approved" });
+    } catch {
+      Toast.fire({ icon: "error", title: "Failed" });
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await axios.patch(
+        `http://localhost:5000/api/requested-booking/reject/${id}`,
+      );
+
+      setBooking((prev) =>
+        prev.map((b) => (b._id === id ? { ...b, status: "Rejected" } : b)),
+      );
+
+      Toast.fire({ icon: "success", title: "Rejected" });
+    } catch {
+      Toast.fire({ icon: "error", title: "Failed" });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-100 p-4 md:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-5xl font-bold text-slate-800">
+        <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">
           Requested Bookings
         </h1>
 
-        <p className="text-slate-500 mt-2">
+        <p className="text-slate-500 mt-2 text-sm md:text-base">
           Manage all customer booking requests
         </p>
       </div>
 
-      {/* Booking Cards */}
-      {bookings.length > 0 ? (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {bookings.map((booking) => (
-            <div
-              key={booking._id}
-              className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300"
-            >
-              {/* Top */}
-              <div className="bg-gradient-to-r from-indigo-600 to-blue-600 p-5 text-white">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl md:text-2xl font-bold">
-                    {booking.title}
-                  </h2>
+      {/* Table Container */}
+      <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+        {/* Table Header */}
+        <div className="grid grid-cols-6 gap-4 px-6 py-5 bg-slate-900 text-slate-200 text-sm font-semibold uppercase tracking-wide">
+          <div>Customer</div>
+          <div>Date</div>
+          <div>Bus</div>
+          <div>Price</div>
+          <div>Status</div>
+          <div className="text-center">Action</div>
+        </div>
 
-                  <span
-                    className={`px-4 py-1 rounded-full text-sm font-semibold ${
-                      booking.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : booking.status === "Approved"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {booking.status}
-                  </span>
+        {/* Table Rows */}
+        {currentBookings.length > 0 ? (
+          currentBookings.map((b) => (
+            <div
+              key={b._id}
+              className="grid grid-cols-6 gap-4 px-6 py-5 items-center border-b border-slate-100 hover:bg-slate-50 transition-all duration-200"
+            >
+              {/* Customer */}
+              <div className="flex items-center gap-3 text-sm font-medium text-slate-700">
+                <div className="bg-amber-100 p-2 rounded-full">
+                  <FaUser className="text-amber-600 text-sm" />
                 </div>
+
+                <span className="truncate">
+                  {b.customerName || b.email || "Unknown"}
+                </span>
               </div>
 
-              {/* Body */}
-              <div className="p-6 space-y-4">
-                {/* Customer */}
-                <div className="flex items-center gap-3 text-slate-700">
-                  <FaUser className="text-indigo-600" />
+              {/* Date */}
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <FaMapMarkerAlt className="text-blue-500" />
 
-                  <p>{booking.customerName}</p>
-                </div>
+                <span>{b.bookingDate || "N/A"}</span>
+              </div>
 
-                {/* Route */}
-                <div className="flex items-center gap-3 text-slate-700">
-                  <FaMapMarkerAlt className="text-blue-600" />
+              {/* Bus */}
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <FaBus className="text-orange-500" />
 
-                  <p>
-                    {booking.from} → {booking.to}
-                  </p>
-                </div>
+                <span>{b.title || "N/A"}</span>
+              </div>
 
-                {/* Bus */}
-                <div className="flex items-center gap-3 text-slate-700">
-                  <FaBus className="text-orange-500" />
+              {/* Price */}
+              <div className="font-bold text-emerald-600 flex items-center gap-2 text-sm">
+                <FaMoneyBillWave className="text-emerald-500" />
 
-                  <p>{booking.busType}</p>
-                </div>
+                <span>৳{b.price}</span>
+              </div>
 
-                {/* Price */}
-                <div className="flex items-center gap-3 text-slate-700">
-                  <FaMoneyBillWave className="text-green-600" />
+              {/* Status */}
+              <div>
+                <span
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${getStatusStyle(
+                    b.status,
+                  )}`}
+                >
+                  {b.status || "unknown"}
+                </span>
+              </div>
 
-                  <p className="font-bold text-lg">৳ {booking.price}</p>
-                </div>
+              {/* Actions */}
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={() => handleApprove(b._id)}
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white p-2.5 rounded-xl shadow-md transition duration-200"
+                >
+                  <FaCheckCircle className="text-lg" />
+                </button>
 
-                {/* Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <button className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-semibold transition">
-                    <FaCheckCircle />
-                    Approve
-                  </button>
-
-                  <button className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-semibold transition">
-                    <FaTimesCircle />
-                    Reject
-                  </button>
-                </div>
+                <button
+                  onClick={() => handleReject(b._id)}
+                  className="bg-rose-500 hover:bg-rose-600 text-white p-2.5 rounded-xl shadow-md transition duration-200"
+                >
+                  <FaTimesCircle className="text-lg" />
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="bg-white rounded-3xl shadow-lg p-10 text-center">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/7486/7486740.png"
-            alt="empty"
-            className="w-28 mx-auto mb-5"
-          />
+          ))
+        ) : (
+          <div className="p-14 text-center text-slate-400 text-lg">
+            No Booking Requests Found
+          </div>
+        )}
+      </div>
 
-          <h2 className="text-2xl font-bold text-slate-700">
-            No Booking Requests
-          </h2>
-
-          <p className="text-slate-500 mt-2">
-            No customer booking requests found.
-          </p>
+      {/* Pagination */}
+      {/* Pagination */}
+      <div className="flex items-center justify-between mt-8 flex-wrap gap-4">
+        {/* Page Info */}
+        <div className="text-sm text-slate-500 font-medium">
+          Page <span className="text-slate-800 font-bold">{currentPage}</span>{" "}
+          of <span className="text-slate-800 font-bold">{totalPages}</span>
         </div>
-      )}
+
+        {/* Pagination Buttons */}
+        <div className="flex items-center gap-2 bg-white border border-slate-200 shadow-md rounded-2xl p-2">
+          {/* Previous */}
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+              currentPage === 1
+                ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                : "bg-slate-900 text-white hover:scale-105"
+            }`}
+          >
+            Prev
+          </button>
+
+          {/* Page Numbers */}
+          {Array.from({ length: totalPages })
+            .slice(
+              Math.max(currentPage - 2, 0),
+              Math.min(currentPage + 1, totalPages),
+            )
+            .map((_, index) => {
+              const page = Math.max(currentPage - 2, 0) + index + 1;
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 rounded-xl text-sm font-bold transition-all duration-200 ${
+                    currentPage === page
+                      ? "bg-amber-500 text-white shadow-lg scale-105"
+                      : "text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+          {/* Next */}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+              currentPage === totalPages
+                ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                : "bg-amber-500 text-white hover:scale-105"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

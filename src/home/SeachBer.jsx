@@ -28,7 +28,11 @@ const SearchBar = () => {
       return;
     }
 
-    // React Router navigation to search results
+    if (from === to) {
+      alert("From and To cannot be same");
+      return;
+    }
+
     navigate(`/search?from=${from}&to=${to}&date=${date}`);
   };
 

@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  FaMoneyBillWave,
-  FaCalendarAlt,
   FaUserCircle,
+  FaCalendarAlt,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
@@ -10,258 +9,176 @@ import {
 const AdminPayments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
 
   useEffect(() => {
-    fetch("http://localhost:5000/all-payments")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+    const fetchPayments = async () => {
+      try {
+        setLoading(true);
 
-        setPayments(data);
+        const token = localStorage.getItem("access-token");
+
+        const res = await fetch("http://localhost:5000/api/admin/payments", {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Error");
+
+        setPayments(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchPayments();
   }, []);
 
-  // Pagination
   const totalPages = Math.ceil(payments.length / itemsPerPage);
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentPayments = payments.slice(startIndex, startIndex + itemsPerPage);
+  const currentPayments = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return payments.slice(start, start + itemsPerPage);
+  }, [payments, currentPage]);
+
+  if (loading)
+    return (
+      <div className="h-96 flex items-center justify-center text-gray-500">
+        Loading payments...
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="h-96 flex items-center justify-center text-red-500">
+        {error}
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-[#071028] p-3 md:p-6">
-      {/* Main Container */}
-      <div className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-[30px] p-4 md:p-8 shadow-2xl">
-        {/* Header */}
-        <div className="bg-white rounded-[30px] p-6 md:p-8 shadow-lg border border-slate-200 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="bg-indigo-100 p-4 rounded-2xl">
-              <FaMoneyBillWave className="text-3xl text-indigo-700" />
-            </div>
+    <>
+      <div className="bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden">
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 p-6 md:p-8 border-b border-slate-100 bg-gradient-to-r from-amber-400 to-amber-200">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
+              Payments
+            </h1>
 
-            <div>
-              <h1 className="text-3xl md:text-5xl font-black text-slate-900">
-                Payment Management
-              </h1>
+            <p className="text-slate-900 mt-2 text-sm md:text-base">
+              Monitor and manage all financial transactions
+            </p>
+          </div>
 
-              <p className="text-slate-600 mt-2 text-sm md:text-base font-medium">
-                View all successful payment transactions from users.
-              </p>
-            </div>
+          {/* TOTAL CARD */}
+          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl px-6 py-4 min-w-[180px]">
+            <p className="text-slate-900 text-sm font-medium">Total Volume</p>
+
+            <h2 className="text-3xl font-extrabold text-amber-500 mt-1">
+              {payments.length}
+            </h2>
           </div>
         </div>
 
-        {/* Loading */}
-        {loading ? (
-          <div className="flex justify-center items-center h-60">
-            <span className="loading loading-spinner loading-lg text-indigo-600"></span>
-          </div>
-        ) : currentPayments.length === 0 ? (
-          <div className="bg-white rounded-3xl p-10 text-center shadow-lg">
+        {/* TABLE HEADER */}
+        <div className="hidden md:grid grid-cols-[1.5fr_1fr_1.5fr_1fr] gap-4 px-6 py-4 bg-slate-300 border-b border-slate-100 text-xs font-semibold uppercase tracking-wider text-slate-700">
+          <div>Customer</div>
+          <div>Amount</div>
+          <div>Transaction ID</div>
+          <div>Date</div>
+        </div>
+
+        {/* TABLE BODY */}
+        {currentPayments.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-4xl mb-4">
+              💳
+            </div>
+
             <h2 className="text-2xl font-bold text-slate-700">
               No Payments Found
             </h2>
+
+            <p className="text-slate-500 mt-2">
+              Transactions will appear here after successful payments
+            </p>
           </div>
         ) : (
-          <>
-            {/* Desktop Table */}
-            <div className="hidden lg:block overflow-x-auto bg-white rounded-[30px] shadow-xl">
-              <table className="table w-full">
-                <thead className="bg-[#08122F] text-white">
-                  <tr className="text-[15px]">
-                    <th className="rounded-tl-[25px]">#</th>
-                    <th>User Email</th>
-                    <th>Amount</th>
-                    <th>Transaction ID</th>
-                    <th className="rounded-tr-[25px]">Date</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {currentPayments.map((p, index) => (
-                    <tr
-                      key={p._id}
-                      className="hover:bg-indigo-50 transition duration-300"
-                    >
-                      {/* Index */}
-                      <td className="font-bold text-slate-800">
-                        {startIndex + index + 1}
-                      </td>
-
-                      {/* Email */}
-                      <td>
-                        <div className="flex items-center gap-3">
-                          <div className="bg-indigo-100 p-2 rounded-full">
-                            <FaUserCircle className="text-2xl text-indigo-700" />
-                          </div>
-
-                          <div>
-                            <h2 className="font-bold text-slate-800">
-                              {p.email || "No Email"}
-                            </h2>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Amount */}
-                      <td>
-                        <span className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full font-black shadow-sm">
-                          ৳ {p.amount || 0}
-                        </span>
-                      </td>
-
-                      {/* Transaction */}
-                      <td>
-                        <div className="bg-slate-100 px-4 py-3 rounded-2xl inline-block">
-                          <p className="font-mono text-sm text-slate-700">
-                            {p.transactionId || "N/A"}
-                          </p>
-                        </div>
-                      </td>
-
-                      {/* Date */}
-                      <td>
-                        <div className="flex items-center gap-2 text-slate-700 font-semibold">
-                          <FaCalendarAlt className="text-indigo-600" />
-
-                          <span>
-                            {p.createdAt
-                              ? new Date(p.createdAt).toLocaleString()
-                              : "No Date"}
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile Card */}
-            <div className="grid gap-5 lg:hidden">
-              {currentPayments.map((p, index) => (
-                <div
-                  key={p._id}
-                  className="bg-white rounded-[30px] p-5 shadow-xl"
-                >
-                  {/* Top */}
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-black text-slate-900">
-                      Payment #{startIndex + index + 1}
-                    </h2>
-
-                    <div className="bg-indigo-100 p-3 rounded-2xl">
-                      <FaMoneyBillWave className="text-2xl text-indigo-700" />
-                    </div>
-                  </div>
-
-                  {/* Info */}
-                  <div className="space-y-5">
-                    {/* Email */}
-                    <div>
-                      <p className="text-sm font-semibold text-slate-500 mb-1">
-                        User Email
-                      </p>
-
-                      <h3 className="font-bold text-slate-800 break-all">
-                        {p.email || "No Email"}
-                      </h3>
-                    </div>
-
-                    {/* Amount */}
-                    <div>
-                      <p className="text-sm font-semibold text-slate-500 mb-1">
-                        Amount
-                      </p>
-
-                      <h2 className="text-3xl font-black text-emerald-700">
-                        ৳ {p.amount || 0}
-                      </h2>
-                    </div>
-
-                    {/* Transaction */}
-                    <div>
-                      <p className="text-sm font-semibold text-slate-500 mb-2">
-                        Transaction ID
-                      </p>
-
-                      <div className="bg-slate-100 p-3 rounded-2xl">
-                        <p className="font-mono text-sm text-slate-700 break-all">
-                          {p.transactionId || "N/A"}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Date */}
-                    <div>
-                      <p className="text-sm font-semibold text-slate-500 mb-2">
-                        Payment Date
-                      </p>
-
-                      <div className="flex items-center gap-2 text-slate-700 font-semibold">
-                        <FaCalendarAlt className="text-indigo-600" />
-
-                        <span className="text-sm">
-                          {p.createdAt
-                            ? new Date(p.createdAt).toLocaleString()
-                            : "No Date"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+          currentPayments.map((pay, idx) => (
+            <div
+              key={idx}
+              className="grid md:grid-cols-[1.5fr_1fr_1.5fr_1fr] grid-cols-1 gap-4 px-6 py-5 items-start md:items-center border-b border-slate-100 hover:bg-amber-50 transition-all duration-200"
+            >
+              {/* CUSTOMER */}
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-amber-300 text-amber-600 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                  {pay.email?.charAt(0).toUpperCase()}
                 </div>
-              ))}
+
+                <div className="overflow-hidden">
+                  <p className="text-slate-800 font-medium truncate">
+                    {pay.email || "Unknown User"}
+                  </p>
+
+                  <p className="text-xs text-slate-600">Customer Account</p>
+                </div>
+              </div>
+
+              {/* AMOUNT */}
+              <div>
+                <span className="inline-flex items-center bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-bold shadow-sm">
+                  💰 ${pay.amount || 0}
+                </span>
+              </div>
+
+              {/* TRANSACTION */}
+              <div className="overflow-hidden">
+                <div className="bg-slate-100 text-slate-600 px-3 py-2 rounded-xl text-xs md:text-sm font-mono truncate">
+                  {pay.transactionId || "No Transaction ID"}
+                </div>
+              </div>
+
+              {/* DATE */}
+              <div className="text-slate-600 text-sm">
+                {pay.date ? new Date(pay.date).toLocaleString() : "N/A"}
+              </div>
             </div>
-
-            {/* Pagination */}
-            <div className="flex flex-wrap justify-center items-center gap-3 mt-10">
-              {/* Prev */}
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-                className="flex items-center gap-2 bg-slate-700 hover:bg-slate-800 text-white px-5 py-3 rounded-2xl font-bold transition disabled:opacity-40"
-              >
-                <FaChevronLeft />
-                Prev
-              </button>
-
-              {/* Page Numbers */}
-              {[...Array(totalPages).keys()].map((num) => (
-                <button
-                  key={num}
-                  onClick={() => setCurrentPage(num + 1)}
-                  className={`w-12 h-12 rounded-2xl font-black transition-all duration-300 ${
-                    currentPage === num + 1
-                      ? "bg-indigo-600 text-white scale-110 shadow-lg"
-                      : "bg-white text-slate-800 hover:bg-slate-200"
-                  }`}
-                >
-                  {num + 1}
-                </button>
-              ))}
-
-              {/* Next */}
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-                className="flex items-center gap-2 bg-[#08122F] hover:bg-[#0f1c47] text-white px-5 py-3 rounded-2xl font-bold transition disabled:opacity-40"
-              >
-                Next
-                <FaChevronRight />
-              </button>
-            </div>
-          </>
+          ))
         )}
       </div>
-    </div>
+
+      {/* PAGINATION */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-8">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            className="w-11 h-11 rounded-xl bg-white border border-slate-200 shadow-sm hover:bg-amber-300 hover:border-amber-300 transition-all flex items-center justify-center text-slate-700"
+          >
+            <FaChevronLeft />
+          </button>
+
+          <div className="px-5 py-2 rounded-xl bg-white border border-slate-200 shadow-sm text-slate-700 font-medium">
+            Page <span className="font-bold text-amber-600">{currentPage}</span>{" "}
+            of {totalPages}
+          </div>
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            className="w-11 h-11 rounded-xl bg-white border border-slate-200 shadow-sm hover:bg-amber-300 hover:border-amber-300 transition-all flex items-center justify-center text-slate-700"
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 

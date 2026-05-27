@@ -26,6 +26,7 @@ import AdminPayments from "../dashboard/adminDashborad/AdminPayments.jsx";
 
 import ManageAdmin from "../dashboard/adminDashborad/ManuAdmin";
 import VendorProfile from "../dashboard/vendorDashboard/VendorProfile.jsx";
+
 import ManuVendor from "../dashboard/vendorDashboard/ManuVendor.jsx";
 import AddTicket from "../dashboard/vendorDashboard/AddTicket.jsx";
 import MyAddedTickets from "../dashboard/vendorDashboard/MyAddedTickets.jsx";
@@ -36,6 +37,8 @@ import Cancel from "../stripe/Cancel.jsx";
 import DashboardLayout from "../layout/DashboardLayout";
 import Dashboard from "../Pages/Dashboard";
 import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
+import SearchResults from "../home/SearchResults.jsx";
+import ContactForm from "../home/Contact.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +49,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path: "search",
+        Component: SearchResults,
+      },
+      {
+        path: "contact",
+        Component: ContactForm,
       },
       {
         path: "tickets",
@@ -111,7 +122,7 @@ export const router = createBrowserRouter([
             path: "vendor-dashboard",
             children: [
               { path: "vendor-profile", element: <VendorProfile /> },
-              { path: "manage-vendor", element: <ManuVendor /> },
+              { path: "manu-vendor", element: <ManuVendor /> },
               { path: "add-ticket", element: <AddTicket /> },
               { path: "my-tickets", element: <MyAddedTickets /> },
               { path: "requested-bookings", element: <RequestedBookings /> },

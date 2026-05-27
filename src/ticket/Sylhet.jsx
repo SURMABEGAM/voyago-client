@@ -2,14 +2,13 @@ import React, { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { AuthContext } from "../Context/Authcontext";
 import UseAxiosSecure from "../hooks/UseAxiosSecure";
-import { useNavigate } from "react-router";
 
 const Sylhet = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const axiosSecure = UseAxiosSecure();
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
+
   useEffect(() => {
     axiosSecure
       .get("/api/tickets")
@@ -27,45 +26,26 @@ const Sylhet = () => {
     return diffDays >= 0 && diffDays <= 30; // আগামী ৩০ দিনের মধ্যে যাত্রা থাকলে বুকিং সম্ভব
   };
 
-  const handleBook = (bus) => {
-    if (!user) {
-      return Swal.fire("Error", "Please login to book a ticket", "error");
-    }
-
-    const bookingData = {
-      busId: bus._id,
-      title: bus.title,
-      price: bus.price,
-      bookingDate: new Date(),
-      status: "pending",
-    };
-
-    Swal.fire({
-      title: "Proceed to Payment?",
-      text: `Booking for ${bus.title} (BDT ${bus.price})`,
-      icon: "info",
-      showCancelButton: true,
-      confirmButtonText: "Yes, Book Now",
-      cancelButtonText: "No, Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axiosSecure
-          .post("/api/booking", bookingData) // backend bookings route
-          .then((res) => {
-            if (res.data.insertedId) {
-              Swal.fire("Success!", "Your ticket has been booked.", "success");
-
-              navigate(`/dashboard/booking/${user.email}`, { state: { bus } }); // Pass bus data to booking page
-              setSelectedBus(null); // close modal after booking
-              console.log(`/dashboard/booking/${user.email}`);
-            }
-          })
-          .catch((error) => console.error("Error booking ticket:", error));
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire("Cancelled", "Your booking was not completed", "info");
-        navigate("/");
+  const handleBook = async (bus) => {
+    try {
+      if (!user?.email) {
+        return Swal.fire("Login Required", "Please login first", "warning");
       }
-    });
+
+      const res = await axiosSecure.post("/create-checkout-session", {
+        ticketId: bus._id,
+        email: user.email,
+        price: bus.price,
+        title: bus.title,
+      });
+
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Error", "Payment failed", "error");
+    }
   };
 
   return (

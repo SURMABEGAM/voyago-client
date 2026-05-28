@@ -1,11 +1,19 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../../Context/Authcontext";
-import Loader from "../../Components/Loader";
 
 const UserProfile = () => {
   const { user, role, loading } = useContext(AuthContext);
   if (loading) {
-    return <Loader />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-amber-100 p-4">
+        <div className="bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl p-8 max-w-md w-full border border-orange-100 animate-pulse">
+          <div className="h-28 w-28 rounded-full bg-gray-300 mx-auto mb-5"></div>
+          <div className="h-6 bg-gray-300 rounded w-3/4 mx-auto mb-2"></div>
+          <div className="h-4 bg-gray-300 rounded w-full mx-auto mb-5"></div>
+          <div className="h-10 bg-gray-300 rounded w-full mx-auto"></div>
+        </div>
+      </div>
+    );
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-amber-100 p-4">

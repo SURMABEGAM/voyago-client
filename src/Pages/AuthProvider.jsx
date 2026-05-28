@@ -8,7 +8,7 @@ import {
   GoogleAuthProvider,
   updateProfile,
 } from "firebase/auth";
-import { AuthContext } from "../Context/Authcontext";
+import { AuthContext } from "../Context/AuthContext";
 import { auth } from "../firebase/Firebase.init";
 import UseAxiosSecure from "../hooks/UseAxiosSecure";
 

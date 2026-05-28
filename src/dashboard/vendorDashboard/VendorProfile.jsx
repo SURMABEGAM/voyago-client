@@ -6,7 +6,7 @@ import {
   FaUserTie,
 } from "react-icons/fa";
 
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../Context/AuthContext";
 import { useLoaderData } from "react-router";
 
 const VendorProfile = () => {

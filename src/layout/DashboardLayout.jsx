@@ -2,7 +2,7 @@ import { NavLink, Outlet } from "react-router";
 import { HiMenuAlt3 } from "react-icons/hi";
 
 import { useContext } from "react";
-import { AuthContext } from "../Context/Authcontext";
+import { AuthContext } from "../Context/AuthContext";
 import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
 import ManuVendor from "../dashboard/vendorDashboard/ManuVendor";
 import ManuUser from "../dashboard/userDashborad/ManuUser";

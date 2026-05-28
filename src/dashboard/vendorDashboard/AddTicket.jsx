@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useContext } from "react";
 import Swal from "sweetalert2";
 import UseAxiosSecure from "../../hooks/UseAxiosSecure";
-import { AuthContext } from "../../Context/Authcontext";
+import { AuthContext } from "../../Context/AuthContext";
 
 import {
   FaMapMarkerAlt,

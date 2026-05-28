@@ -5,7 +5,7 @@ import loginImg from "../assets/Login.jpg";
 import { Link, useLocation, useNavigate } from "react-router";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { AuthContext } from "../Context/Authcontext";
+import { AuthContext } from "../Context/AuthContext";
 
 const Login = () => {
   const { googleLogin, resetPassword, setUser, setLoading, signInUser } =

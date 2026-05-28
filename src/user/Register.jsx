@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import UseAxiosSecure from "../hooks/UseAxiosSecure";
 import registerImg from "../assets/register (7).png";
-import { AuthContext } from "../Context/Authcontext";
+import { AuthContext } from "../Context/AuthContext";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -91,7 +91,7 @@ const Register = () => {
       await axiosSecure.post("/api/register", {
         name,
         email,
-         password,
+        password,
         role: "user",
         photoURL,
       });

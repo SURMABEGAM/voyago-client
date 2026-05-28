@@ -1,18 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import UseAxiosSecure from "./UseAxiosSecure";
-import { AuthContext } from "../Context/Authcontext";
+import { AuthContext } from "../Context/AuthContext";
 
 const Role = () => {
-  const { user,loading } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
   const [role, setRole] = useState("");
   const [roleLoading, setRoleLoading] = useState(true);
   const axiosSecure = UseAxiosSecure(); // ✅ hook call
 
   useEffect(() => {
     if (loading) {
-    
       return; // wait until loading is false
-    } 
+    }
     const fetchRole = async () => {
       if (!user?.email) {
         setRole("");
@@ -33,7 +32,7 @@ const Role = () => {
     };
 
     fetchRole();
-  }, [user,loading, axiosSecure]);
+  }, [user, loading, axiosSecure]);
 
   return { role, roleLoading };
 };

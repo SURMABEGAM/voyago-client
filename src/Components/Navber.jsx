@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { NavLink } from "react-router";
 import logo from "../assets/logo1.png";
-import { AuthContext } from "../Context/Authcontext";
+import { AuthContext } from "../Context/AuthContext";
 const Navbar = () => {
   const { user, signOutUser, loading } = useContext(AuthContext);
 

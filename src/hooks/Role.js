@@ -6,7 +6,7 @@ const Role = () => {
   const { user, loading } = useContext(AuthContext);
   const [role, setRole] = useState("");
   const [roleLoading, setRoleLoading] = useState(true);
-  const axiosSecure = UseAxiosSecure(); // ✅ hook call
+  const axiosSecure = UseAxiosSecure();
 
   useEffect(() => {
     if (loading) {

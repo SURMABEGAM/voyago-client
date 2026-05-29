@@ -1,10 +1,24 @@
-import React from "react";
-import { FaBars, FaUserShield, FaBus, FaUsers } from "react-icons/fa";
+import React, { useContext } from "react";
+import { FaBars, FaUserShield } from "react-icons/fa";
+import { Outlet } from "react-router";
+import { AuthContext } from "../Context/AuthContext"; // আপনার পাথের সাথে মিলিয়ে নিন
+import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
+import ManuVendor from "../dashboard/vendorDashboard/ManuVendor";
+import ManuUser from "../dashboard/userDashborad/ManuUser";
 
 const Dashboard = () => {
+  const { role, roleLoading } = useContext(AuthContext);
+
+  if (roleLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-100">
-      {/* Drawer Wrapper */}
       <div className="drawer lg:drawer-open min-h-screen">
         <input
           id="dashboard-drawer"
@@ -14,84 +28,60 @@ const Dashboard = () => {
 
         {/* MAIN CONTENT */}
         <div className="drawer-content flex flex-col flex-1">
-          {/* Mobile Navbar */}
-          <div className="w-full navbar bg-[#081028] text-white lg:hidden">
+          {/* Navbar */}
+          <div className="w-full navbar bg-[#081028] text-white flex justify-between px-4">
             <label
               htmlFor="dashboard-drawer"
-              className="btn btn-square btn-ghost"
+              className="btn btn-square btn-ghost lg:hidden"
             >
               <FaBars className="text-xl" />
             </label>
+            <h1 className="text-lg font-bold capitalize">{role} Dashboard</h1>
 
-            <h1 className="text-xl font-bold ml-2">Admin Dashboard</h1>
+            <div className="dropdown dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle"
+              >
+                <FaUserShield className="text-2xl" />
+              </div>
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content mt-3 z-[1] p-3 shadow bg-base-100 text-black rounded-box w-52"
+              >
+                <li>
+                  <a>User Dashboard</a>
+                </li>
+                <li>
+                  <a>Vendor Dashboard</a>
+                </li>
+                <li>
+                  <a>Admin Dashboard</a>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Page Content */}
           <div className="p-4 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {/* Welcome Card */}
-              <div className="bg-gradient-to-b from-orange-400 to-orange-500 text-white rounded-3xl p-6 shadow-xl">
-                <div className="flex justify-center">
-                  <img
-                    src="https://i.ibb.co/6JQ5jQw/avatar.png"
-                    alt="admin"
-                    className="w-24 h-24 rounded-full border-4 border-white object-cover"
-                  />
-                </div>
-
-                <h2 className="text-2xl font-bold text-center mt-4">
-                  Welcome Administrator
-                </h2>
-
-                <p className="text-center mt-3 text-sm leading-7">
-                  Manage buses, users, bookings and revenue from one dashboard.
-                </p>
-              </div>
-
-              {/* Card 1 */}
-              <div className="bg-white rounded-3xl p-6 shadow-lg">
-                <FaBus className="text-4xl text-primary mb-4" />
-                <h2 className="text-2xl font-bold">Manage Tickets</h2>
-                <p className="mt-2 text-slate-500">
-                  Control routes and tickets easily.
-                </p>
-              </div>
-
-              {/* Card 2 */}
-              <div className="bg-white rounded-3xl p-6 shadow-lg">
-                <FaUsers className="text-4xl text-primary mb-4" />
-                <h2 className="text-2xl font-bold">Manage Users</h2>
-                <p className="mt-2 text-slate-500">
-                  Monitor passengers and vendors.
-                </p>
-              </div>
-            </div>
+            <Outlet /> {/* চাইল্ড রাউট এখানে রেন্ডার হবে */}
           </div>
         </div>
 
         {/* SIDEBAR */}
         <div className="drawer-side">
           <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
-
-          <ul className="menu p-4 w-72 min-h-full bg-[#081028] text-white">
-            <h2 className="text-3xl font-bold mb-10 mt-4 flex items-center gap-3">
-              <FaUserShield />
-              Dashboard
+          <div className="menu p-4 w-80 min-h-full bg-[#081028] text-white">
+            <h2 className="text-xl font-bold mb-6 mt-2 px-2 capitalize">
+              {role} Dashboard
             </h2>
 
-            <li>
-              <a>Admin Profile</a>
-            </li>
-            <li>
-              <a>Manage Tickets</a>
-            </li>
-            <li>
-              <a>Manage Users</a>
-            </li>
-            <li>
-              <a>Admin Payments</a>
-            </li>
-          </ul>
+            {/* ডাইনামিক মেনু রেন্ডারিং */}
+            {role === "admin" && <ManuAdmin />}
+            {role === "vendor" && <ManuVendor />}
+            {role === "user" && <ManuUser />}
+          </div>
         </div>
       </div>
     </div>

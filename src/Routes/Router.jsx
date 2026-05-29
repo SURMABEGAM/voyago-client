@@ -18,7 +18,6 @@ import ManageUsers from "../dashboard/adminDashborad/ManageUsers";
 import ManageTickets from "../dashboard/adminDashborad/ManageTickets";
 import AdminPayments from "../dashboard/adminDashborad/AdminPayments.jsx";
 
-import ManageAdmin from "../dashboard/adminDashborad/ManuAdmin";
 import VendorProfile from "../dashboard/vendorDashboard/VendorProfile.jsx";
 
 import ManuVendor from "../dashboard/vendorDashboard/ManuVendor.jsx";

@@ -1,107 +1,99 @@
 import React from "react";
+import { FaBars, FaUserShield, FaBus, FaUsers } from "react-icons/fa";
 
 const Dashboard = () => {
   return (
-    <div className="dock bg-neutral text-neutral-content">
-      <button>
-        <svg
-          className="size-[1.2em]"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <g fill="currentColor" strokeLinejoin="miter" strokeLinecap="butt">
-            <polyline
-              points="1 11 12 2 23 11"
-              fill="none"
-              stroke="currentColor"
-              stroke-miterlimit="10"
-              strokeWidth="2"
-            ></polyline>
-            <path
-              d="m5,13v7c0,1.105.895,2,2,2h10c1.105,0,2-.895,2-2v-7"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="square"
-              stroke-miterlimit="10"
-              strokeWidth="2"
-            ></path>
-            <line
-              x1="12"
-              y1="22"
-              x2="12"
-              y2="18"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="square"
-              stroke-miterlimit="10"
-              strokeWidth="2"
-            ></line>
-          </g>
-        </svg>
-        <span className="dock-label">Home</span>
-      </button>
+    <div className="min-h-screen bg-slate-100">
+      {/* Drawer Wrapper */}
+      <div className="drawer lg:drawer-open min-h-screen">
+        <input
+          id="dashboard-drawer"
+          type="checkbox"
+          className="drawer-toggle"
+        />
 
-      <button className="dock-active">
-        <svg
-          className="size-[1.2em]"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <g fill="currentColor" strokeLinejoin="miter" strokeLinecap="butt">
-            <polyline
-              points="3 14 9 14 9 17 15 17 15 14 21 14"
-              fill="none"
-              stroke="currentColor"
-              stroke-miterlimit="10"
-              strokeWidth="2"
-            ></polyline>
-            <rect
-              x="3"
-              y="3"
-              width="18"
-              height="18"
-              rx="2"
-              ry="2"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="square"
-              stroke-miterlimit="10"
-              strokeWidth="2"
-            ></rect>
-          </g>
-        </svg>
-        <span className="dock-label">Inbox</span>
-      </button>
+        {/* MAIN CONTENT */}
+        <div className="drawer-content flex flex-col flex-1">
+          {/* Mobile Navbar */}
+          <div className="w-full navbar bg-[#081028] text-white lg:hidden">
+            <label
+              htmlFor="dashboard-drawer"
+              className="btn btn-square btn-ghost"
+            >
+              <FaBars className="text-xl" />
+            </label>
 
-      <button>
-        <svg
-          className="size-[1.2em]"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <g fill="currentColor" strokeLinejoin="miter" strokeLinecap="butt">
-            <circle
-              cx="12"
-              cy="12"
-              r="3"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="square"
-              stroke-miterlimit="10"
-              strokeWidth="2"
-            ></circle>
-            <path
-              d="m22,13.25v-2.5l-2.318-.966c-.167-.581-.395-1.135-.682-1.654l.954-2.318-1.768-1.768-2.318.954c-.518-.287-1.073-.515-1.654-.682l-.966-2.318h-2.5l-.966,2.318c-.581.167-1.135.395-1.654.682l-2.318-.954-1.768,1.768.954,2.318c-.287.518-.515,1.073-.682,1.654l-2.318.966v2.5l2.318.966c.167.581.395,1.135.682,1.654l-.954,2.318,1.768,1.768,2.318-.954c.518.287,1.073.515,1.654.682l.966,2.318h2.5l.966-2.318c.581-.167,1.135-.395,1.654-.682l2.318.954,1.768-1.768-.954-2.318c.287-.518.515-1.073.682-1.654l2.318-.966Z"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="square"
-              stroke-miterlimit="10"
-              strokeWidth="2"
-            ></path>
-          </g>
-        </svg>
-        <span className="dock-label">Settings</span>
-      </button>
+            <h1 className="text-xl font-bold ml-2">Admin Dashboard</h1>
+          </div>
+
+          {/* Page Content */}
+          <div className="p-4 md:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {/* Welcome Card */}
+              <div className="bg-gradient-to-b from-orange-400 to-orange-500 text-white rounded-3xl p-6 shadow-xl">
+                <div className="flex justify-center">
+                  <img
+                    src="https://i.ibb.co/6JQ5jQw/avatar.png"
+                    alt="admin"
+                    className="w-24 h-24 rounded-full border-4 border-white object-cover"
+                  />
+                </div>
+
+                <h2 className="text-2xl font-bold text-center mt-4">
+                  Welcome Administrator
+                </h2>
+
+                <p className="text-center mt-3 text-sm leading-7">
+                  Manage buses, users, bookings and revenue from one dashboard.
+                </p>
+              </div>
+
+              {/* Card 1 */}
+              <div className="bg-white rounded-3xl p-6 shadow-lg">
+                <FaBus className="text-4xl text-primary mb-4" />
+                <h2 className="text-2xl font-bold">Manage Tickets</h2>
+                <p className="mt-2 text-slate-500">
+                  Control routes and tickets easily.
+                </p>
+              </div>
+
+              {/* Card 2 */}
+              <div className="bg-white rounded-3xl p-6 shadow-lg">
+                <FaUsers className="text-4xl text-primary mb-4" />
+                <h2 className="text-2xl font-bold">Manage Users</h2>
+                <p className="mt-2 text-slate-500">
+                  Monitor passengers and vendors.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SIDEBAR */}
+        <div className="drawer-side">
+          <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
+
+          <ul className="menu p-4 w-72 min-h-full bg-[#081028] text-white">
+            <h2 className="text-3xl font-bold mb-10 mt-4 flex items-center gap-3">
+              <FaUserShield />
+              Dashboard
+            </h2>
+
+            <li>
+              <a>Admin Profile</a>
+            </li>
+            <li>
+              <a>Manage Tickets</a>
+            </li>
+            <li>
+              <a>Manage Users</a>
+            </li>
+            <li>
+              <a>Admin Payments</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };

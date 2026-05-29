@@ -1,46 +1,62 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router";
 import Swal from "sweetalert2";
-import axios from "axios";
 
 import UseAxiosSecure from "../hooks/UseAxiosSecure";
 import { AuthContext } from "../Context/AuthContext";
 
-const Dhaka = () => {
+const CityTickets = () => {
+  const { cityName } = useParams();
+
   const [tickets, setTickets] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
 
-  const axiosSecure = UseAxiosSecure();
-
   const { user } = useContext(AuthContext);
 
-  // Fetch tickets
+  const axiosSecure = UseAxiosSecure();
+
   useEffect(() => {
     axiosSecure
       .get("/api/tickets")
-      .then((res) => setTickets(res.data.slice(0, 6)))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        console.log("All Tickets:", res.data);
+
+        const filtered = res.data.filter(
+          (ticket) => ticket.from?.toLowerCase() === cityName?.toLowerCase(),
+        );
+
+        setTickets(filtered);
+      })
+      .catch((err) => console.error("Fetch error:", err));
+  }, [cityName, axiosSecure]);
 
   const isBookable = (departureDate) => {
     if (!departureDate) return false;
+
     const today = new Date();
     const departure = new Date(departureDate);
+
     const diffDays = (departure - today) / (1000 * 60 * 60 * 24);
+
     return diffDays >= 0 && diffDays <= 15;
   };
 
-  // Stripe Hosted Checkout
-  const handlePayment = async (bus) => {
+  const handleBook = async (bus) => {
     try {
-      const res = await axios.post(
-        "https://voyago-server-theta.vercel.app/api/create-checkout-session",
-        {
-          ticketId: bus._id,
-          email: user.email,
-        },
-      );
+      if (!user?.email) {
+        return Swal.fire("Login Required", "Please login first", "warning");
+      }
 
-      window.location.href = res.data.url;
+      const res = await axiosSecure.post("/create-checkout-session", {
+        ticketId: bus._id,
+        email: user.email,
+        price: bus.price,
+        title: bus.title,
+      });
+
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      }
     } catch (error) {
       console.log(error);
 
@@ -50,11 +66,16 @@ const Dhaka = () => {
 
   return (
     <>
+      <div className="text-center mt-10">
+        <h2 className="text-4xl font-bold">Tickets From {cityName}</h2>
+      </div>
+
       {/* ================= ALL CARDS ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
-        {tickets.slice(0, 6).map((bus) => (
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+        {tickets.map((bus) => (
           <div
-            key={bus.id}
+            key={bus._id}
             className={`card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border border-base-200 overflow-hidden ${
               bus.quantity === 0 && "opacity-60 grayscale"
             }`}
@@ -70,6 +91,7 @@ const Dhaka = () => {
             <div className="card-body p-5">
               <div className="flex justify-between items-start">
                 <h2 className="card-title text-lg font-bold">{bus.title}</h2>
+
                 {bus.approved && (
                   <span className="badge badge-success badge-sm text-white">
                     Verified
@@ -79,16 +101,17 @@ const Dhaka = () => {
 
               <div className="text-sm text-base-content/70 space-y-1 my-2">
                 <p>
-                  Route:{" "}
-                  <span className="font-semibold text-base-content">
+                  Route:
+                  <span className="font-semibold text-base-content ml-2">
                     {bus.from} ➔ {bus.to}
                   </span>
                 </p>
+
                 <p className="text-primary font-bold text-lg">৳ {bus.price}</p>
               </div>
 
               <div className="flex flex-wrap gap-2 my-2">
-                {bus.perks.map((perk, i) => (
+                {bus.perks?.map((perk, i) => (
                   <span key={i} className="badge badge-ghost badge-sm">
                     {perk}
                   </span>
@@ -97,10 +120,13 @@ const Dhaka = () => {
 
               <div className="card-actions justify-between items-center mt-4">
                 <span
-                  className={`text-xs font-medium ${bus.quantity > 0 ? "text-green-600" : "text-red-500"}`}
+                  className={`text-xs font-medium ${
+                    bus.quantity > 0 ? "text-green-600" : "text-red-500"
+                  }`}
                 >
                   {bus.quantity > 0 ? `${bus.quantity} Seats Left` : "Sold Out"}
                 </span>
+
                 <button
                   className="btn btn-primary btn-sm px-6"
                   onClick={() => setSelectedBus(bus)}
@@ -114,16 +140,18 @@ const Dhaka = () => {
       </div>
 
       {/* ================= MODAL ================= */}
+
       {selectedBus && (
         <div className="modal modal-open backdrop-blur-sm">
           <div className="modal-box p-0 overflow-hidden">
-            {/* Header Image */}
             <div className="relative h-48 w-full">
               <img
                 src={selectedBus.image}
                 className="w-full h-full object-cover"
               />
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
               <h3 className="absolute bottom-4 left-4 text-white font-bold text-xl">
                 {selectedBus.title}
               </h3>
@@ -133,18 +161,25 @@ const Dhaka = () => {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-gray-400">From</p>
+
                   <p className="font-semibold">{selectedBus.from}</p>
                 </div>
+
                 <div>
                   <p className="text-gray-400">To</p>
+
                   <p className="font-semibold">{selectedBus.to}</p>
                 </div>
+
                 <div>
                   <p className="text-gray-400">Departure</p>
+
                   <p className="font-semibold">{selectedBus.departureDate}</p>
                 </div>
+
                 <div>
                   <p className="text-gray-400">Time</p>
+
                   <p className="font-semibold">{selectedBus.departureTime}</p>
                 </div>
               </div>
@@ -155,6 +190,7 @@ const Dhaka = () => {
                 <span className="text-2xl font-bold text-primary">
                   ৳ {selectedBus.price}
                 </span>
+
                 <span className="badge badge-lg">
                   {selectedBus.quantity} Seats Available
                 </span>
@@ -173,7 +209,7 @@ const Dhaka = () => {
               isBookable(selectedBus.departureDate) ? (
                 <button
                   className="btn btn-primary px-8"
-                  onClick={() => handlePayment(selectedBus)}
+                  onClick={() => handleBook(selectedBus)}
                 >
                   Book Now
                 </button>
@@ -190,4 +226,4 @@ const Dhaka = () => {
   );
 };
 
-export default Dhaka;
+export default CityTickets;

@@ -7,12 +7,6 @@ import Home from "../Pages/Home";
 import Login from "../user/Login";
 import Register from "../user/Register";
 import AllTickets from "../Pages/AllTickets";
-import Dhaka from "../ticket/Dhaka";
-import Chittagong from "../ticket/Chittagong";
-import Sylhet from "../ticket/Sylhet";
-import Rajshahi from "../ticket/Rajshahi";
-import Khulna from "../ticket/Khulna";
-import Rangpur from "../ticket/Rangpur";
 
 import PrivateRoute from "./PrivateRoute";
 import TransactionHistory from "../dashboard/userDashborad/TransactionHistory";
@@ -39,6 +33,7 @@ import Dashboard from "../Pages/Dashboard";
 import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
 import SearchResults from "../home/SearchResults.jsx";
 import ContactForm from "../home/Contact.jsx";
+import CityTickets from "../ticket/CityTickets.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -67,32 +62,12 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "privateroute",
-        Component: PrivateRoute,
-      },
-      {
-        path: "tickets/dhaka",
-        Component: Dhaka,
-      },
-      {
-        path: "tickets/chittagong",
-        Component: Chittagong,
-      },
-      {
-        path: "tickets/sylhet",
-        Component: Sylhet,
-      },
-      {
-        path: "tickets/rajshahi",
-        Component: Rajshahi,
-      },
-      {
-        path: "tickets/khulna",
-        Component: Khulna,
-      },
-      {
-        path: "tickets/rangpur",
-        Component: Rangpur,
+        path: "tickets/:cityName",
+        element: (
+          <PrivateRoute>
+            <CityTickets />
+          </PrivateRoute>
+        ),
       },
 
       {

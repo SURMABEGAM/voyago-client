@@ -25,11 +25,20 @@ const SearchResults = () => {
   const date = searchParams.get("date");
 
   useEffect(() => {
+    setLoading(true);
     axios
       .get("https://voyago-server-theta.vercel.app/api/tickets")
       .then((res) => {
+        console.log("All Tickets from server:", res.data);
+
         const filtered = res.data.filter((ticket) => {
-          console.log(ticket);
+          console.log(
+            "Checking ticket:",
+            ticket.departureDate,
+            "against",
+            date,
+          );
+
           return (
             ticket.from === from &&
             ticket.to === to &&
@@ -42,6 +51,7 @@ const SearchResults = () => {
       })
       .catch((err) => {
         console.log(err);
+        Swal.fire("Error", "Data load failed", "error");
       })
       .finally(() => setLoading(false));
   }, [from, to, date]);

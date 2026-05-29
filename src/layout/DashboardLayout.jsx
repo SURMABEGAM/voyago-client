@@ -1,10 +1,27 @@
-import { Outlet, NavLink } from "react-router";
-import { FaBars, FaUserShield, FaBus, FaUsers, FaHome } from "react-icons/fa";
+import { useContext } from "react";
+import { Navigate, NavLink, Outlet } from "react-router";
+import { FaBars, FaBus, FaHome, FaUserShield } from "react-icons/fa";
+import { AuthContext } from "../Context/AuthContext";
+import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
+import ManuVendor from "../dashboard/vendorDashboard/ManuVendor";
+import ManuUser from "../dashboard/userDashborad/ManuUser";
 
 const DashboardLayout = () => {
-  // Example Role
-  const role = "admin";
-  // admin | vendor | user
+  const { user, loading, role } = useContext(AuthContext);
+
+  // Loading
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  // Not Logged In
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -19,6 +36,7 @@ const DashboardLayout = () => {
         <div className="drawer-content flex flex-col">
           {/* MOBILE NAVBAR */}
           <div className="navbar bg-[#081028] text-white lg:hidden">
+            {/* MENU BUTTON */}
             <div className="flex-none">
               <label
                 htmlFor="dashboard-drawer"
@@ -28,36 +46,16 @@ const DashboardLayout = () => {
               </label>
             </div>
 
+            {/* TITLE */}
             <div className="flex-1">
               <h2 className="text-lg font-bold">Dashboard</h2>
             </div>
 
-            {/* Profile Dropdown */}
-            <div className="flex-none dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-circle"
-              >
+            {/* USER ICON */}
+            <div className="flex-none">
+              <button className="btn btn-ghost btn-circle">
                 <FaUserShield className="text-2xl" />
-              </div>
-
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content mt-3 z-[1] p-3 shadow bg-white text-black rounded-box w-52"
-              >
-                <li>
-                  <a>User Dashboard</a>
-                </li>
-
-                <li>
-                  <a>Vendor Dashboard</a>
-                </li>
-
-                <li>
-                  <a>Admin Dashboard</a>
-                </li>
-              </ul>
+              </button>
             </div>
           </div>
 
@@ -71,102 +69,39 @@ const DashboardLayout = () => {
         <div className="drawer-side z-50">
           <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
 
-          <ul className="menu p-4 w-72 min-h-full bg-[#081028] text-white">
+          <div className="w-72 min-h-full bg-[#081028] text-white p-5">
             {/* LOGO */}
-            <h2 className="text-3xl font-bold mb-10 mt-4 flex items-center gap-3">
-              <FaUserShield />
-              Dashboard
-            </h2>
+            <div className="flex items-center gap-3 mb-10 mt-4">
+              <FaBus className="text-3xl text-primary" />
 
-            {/* COMMON */}
-            <li>
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  isActive
-                    ? "bg-primary text-white rounded-lg"
-                    : "hover:bg-slate-700 rounded-lg"
-                }
-              >
-                <FaHome />
-                Home
-              </NavLink>
-            </li>
+              <h2 className="text-3xl font-bold">Voyago</h2>
+            </div>
 
-            {/* ADMIN MENU */}
-            {role === "admin" && (
-              <>
-                <li>
-                  <NavLink
-                    to="/dashboard/admin-profile"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-primary text-white rounded-lg"
-                        : "hover:bg-slate-700 rounded-lg"
-                    }
-                  >
-                    Admin Profile
-                  </NavLink>
-                </li>
+            {/* HOME */}
+            <ul className="menu mb-6">
+              <li>
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 rounded-lg ${
+                      isActive ? "bg-primary text-white" : "hover:bg-slate-700"
+                    }`
+                  }
+                >
+                  <FaHome />
+                  Home
+                </NavLink>
+              </li>
+            </ul>
 
-                <li>
-                  <NavLink
-                    to="/dashboard/manage-tickets"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-primary text-white rounded-lg"
-                        : "hover:bg-slate-700 rounded-lg"
-                    }
-                  >
-                    <FaBus />
-                    Manage Tickets
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink
-                    to="/dashboard/manage-users"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-primary text-white rounded-lg"
-                        : "hover:bg-slate-700 rounded-lg"
-                    }
-                  >
-                    <FaUsers />
-                    Manage Users
-                  </NavLink>
-                </li>
-              </>
+            {role === "admin" ? (
+              <ManuAdmin />
+            ) : role === "vendor" ? (
+              <ManuVendor />
+            ) : (
+              <ManuUser />
             )}
-
-            {/* VENDOR MENU */}
-            {role === "vendor" && (
-              <>
-                <li>
-                  <NavLink to="/dashboard/vendor-profile">
-                    Vendor Profile
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink to="/dashboard/add-bus">Add Bus</NavLink>
-                </li>
-              </>
-            )}
-
-            {/* USER MENU */}
-            {role === "user" && (
-              <>
-                <li>
-                  <NavLink to="/dashboard/my-profile">My Profile</NavLink>
-                </li>
-
-                <li>
-                  <NavLink to="/dashboard/my-bookings">My Bookings</NavLink>
-                </li>
-              </>
-            )}
-          </ul>
+          </div>
         </div>
       </div>
     </div>

@@ -1,16 +1,16 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from 'react';
 
-import axios from "axios";
-import Swal from "sweetalert2";
-import { AuthContext } from "../Context/AuthContext";
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { AuthContext } from '../Context/AuthContext';
 import {
   FaBus,
   FaCalendarAlt,
   FaClock,
   FaMapMarkerAlt,
   FaTimes,
-} from "react-icons/fa";
-import { useSearchParams } from "react-router";
+} from 'react-icons/fa';
+import { useSearchParams } from 'react-router';
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -20,22 +20,22 @@ const SearchResults = () => {
 
   const { user } = useContext(AuthContext);
 
-  const from = searchParams.get("from");
-  const to = searchParams.get("to");
-  const date = searchParams.get("date");
+  const from = searchParams.get('from');
+  const to = searchParams.get('to');
+  const date = searchParams.get('date');
 
   useEffect(() => {
     setLoading(true);
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/tickets`)
-      .then((res) => {
-        console.log("All Tickets from server:", res.data);
+      .then(res => {
+        console.log('All Tickets from server:', res.data);
 
-        const filtered = res.data.filter((ticket) => {
+        const filtered = res.data.filter(ticket => {
           console.log(
-            "Checking ticket:",
+            'Checking ticket:',
             ticket.departureDate,
-            "against",
+            'against',
             date,
           );
 
@@ -43,28 +43,28 @@ const SearchResults = () => {
             ticket.from === from &&
             ticket.to === to &&
             ticket.departureDate === date &&
-            ticket.verificationStatus === "approved"
+            ticket.verificationStatus === 'approved'
           );
         });
 
         setTickets(filtered);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
-        Swal.fire("Error", "Data load failed", "error");
+        Swal.fire('Error', 'Data load failed', 'error');
       })
       .finally(() => setLoading(false));
   }, [from, to, date]);
 
   // PAYMENT
-  const handlePayment = async (bus) => {
+  const handlePayment = async bus => {
     if (!user) {
-      return Swal.fire("Login Required", "Please login first", "warning");
+      return Swal.fire('Login Required', 'Please login first', 'warning');
     }
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/create-checkout-session`,
+        `${import.meta.env.VITE_API_URL}/create-checkout-session`,
         {
           ticketId: bus._id,
           email: user.email,
@@ -75,12 +75,12 @@ const SearchResults = () => {
     } catch (error) {
       console.log(error);
 
-      Swal.fire("Error", "Payment Failed", "error");
+      Swal.fire('Error', 'Payment Failed', 'error');
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* TOP */}
         <div className="bg-blue-950 text-white rounded-3xl p-6 mb-8">
@@ -113,7 +113,7 @@ const SearchResults = () => {
           </div>
         ) : tickets.length === 0 ? (
           // NO DATA
-          <div className="bg-white rounded-3xl p-12 text-center shadow">
+          <div className=" rounded-3xl p-12 text-center shadow">
             <h2 className="text-4xl font-bold text-red-500">No Bus Found</h2>
 
             <p className="text-slate-500 mt-3">
@@ -123,7 +123,7 @@ const SearchResults = () => {
         ) : (
           // CARDS
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tickets.map((ticket) => (
+            {tickets.map(ticket => (
               <div
                 key={ticket._id}
                 className="bg-white rounded-3xl overflow-hidden shadow hover:shadow-xl transition"

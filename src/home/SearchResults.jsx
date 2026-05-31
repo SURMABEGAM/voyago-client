@@ -27,7 +27,7 @@ const SearchResults = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("https://voyago-server-theta.vercel.app/api/tickets")
+      .get(`${import.meta.env.VITE_API_URL}/api/tickets`)
       .then((res) => {
         console.log("All Tickets from server:", res.data);
 
@@ -64,7 +64,7 @@ const SearchResults = () => {
 
     try {
       const res = await axios.post(
-        "https://voyago-server-theta.vercel.app/create-checkout-session",
+        `${import.meta.env.VITE_API_URL}/api/create-checkout-session`,
         {
           ticketId: bus._id,
           email: user.email,

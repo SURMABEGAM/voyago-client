@@ -9,7 +9,6 @@ import ManuUser from "../dashboard/userDashborad/ManuUser";
 const DashboardLayout = () => {
   const { user, loading, role } = useContext(AuthContext);
 
-  // Loading
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
@@ -18,7 +17,6 @@ const DashboardLayout = () => {
     );
   }
 
-  // Not Logged In
   if (!user) {
     return <Navigate to="/login" replace />;
   }
@@ -32,34 +30,23 @@ const DashboardLayout = () => {
           className="drawer-toggle"
         />
 
-        {/* MAIN CONTENT */}
+        {/* MAIN CONTENT AREA */}
         <div className="drawer-content flex flex-col">
-          {/* MOBILE NAVBAR */}
-          <div className="navbar bg-[#081028] text-white lg:hidden">
-            {/* MENU BUTTON */}
-            <div className="flex-none">
-              <label
-                htmlFor="dashboard-drawer"
-                className="btn btn-square btn-ghost"
-              >
-                <FaBars className="text-xl" />
-              </label>
-            </div>
-
-            {/* TITLE */}
-            <div className="flex-1">
-              <h2 className="text-lg font-bold">Dashboard</h2>
-            </div>
-
-            {/* USER ICON */}
-            <div className="flex-none">
-              <button className="btn btn-ghost btn-circle">
-                <FaUserShield className="text-2xl" />
-              </button>
+          {/* NAVBAR */}
+          <div className="navbar bg-[#081028] text-white flex justify-between px-4">
+            <label
+              htmlFor="dashboard-drawer"
+              className="btn btn-square btn-ghost lg:hidden"
+            >
+              <FaBars className="text-xl" />
+            </label>
+            <h2 className="text-lg font-bold capitalize">{role} Dashboard</h2>
+            <div className="btn btn-ghost btn-circle">
+              <FaUserShield className="text-2xl" />
             </div>
           </div>
 
-          {/* PAGE CONTENT */}
+          {/* DYNAMIC CONTENT */}
           <div className="p-4 md:p-8">
             <Outlet />
           </div>
@@ -68,12 +55,9 @@ const DashboardLayout = () => {
         {/* SIDEBAR */}
         <div className="drawer-side z-50">
           <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
-
           <div className="w-72 min-h-full bg-[#081028] text-white p-5">
-            {/* LOGO */}
             <div className="flex items-center gap-3 mb-10 mt-4">
               <FaBus className="text-3xl text-primary" />
-
               <h2 className="text-3xl font-bold">Voyago</h2>
             </div>
 

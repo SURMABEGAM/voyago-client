@@ -15,7 +15,7 @@ const MyAddedTickets = () => {
 
   useEffect(() => {
     axios
-      .get("https://voyago-server-theta.vercel.app/api/tickets")
+      .get(`${import.meta.env.VITE_API_URL}/api/tickets`)
       .then((res) => {
         setTickets(res.data);
       })

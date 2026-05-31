@@ -13,14 +13,11 @@ const ManageUsers = () => {
     try {
       const token = localStorage.getItem("access-token");
 
-      const res = await axios.get(
-        "https://voyago-server-theta.vercel.app/api/admin/users",
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
+        headers: {
+          authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setUsers(res.data || []);
     } catch (error) {
@@ -29,10 +26,9 @@ const ManageUsers = () => {
   };
 
   const updateRole = async (id, role) => {
-    await axios.patch(
-      `https://voyago-server-theta.vercel.app/api/users/role/${id}`,
-      { role },
-    );
+    await axios.patch(`${import.meta.env.VITE_API_URL}/api/users/role/${id}`, {
+      role,
+    });
 
     Swal.fire({
       icon: "success",
@@ -43,9 +39,7 @@ const ManageUsers = () => {
   };
 
   const markFraud = async (id) => {
-    await axios.patch(
-      `https://voyago-server-theta.vercel.app/api/users/fraud/${id}`,
-    );
+    await axios.patch(`${import.meta.env.VITE_API_URL}/api/users/fraud/${id}`);
 
     Swal.fire({
       icon: "warning",

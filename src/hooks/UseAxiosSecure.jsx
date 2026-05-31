@@ -2,14 +2,16 @@ import axios from "axios";
 
 const UseAxiosSecure = () => {
   const instance = axios.create({
-    baseURL: "https://voyago-server-theta.vercel.app/",
+    baseURL: import.meta.env.VITE_API_URL,
   });
 
   instance.interceptors.request.use((config) => {
     const token = localStorage.getItem("access-token");
+
     if (token) {
-      config.headers.authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   });
 

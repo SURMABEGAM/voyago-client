@@ -12,7 +12,7 @@ const ManageTickets = () => {
   const fetchTickets = async () => {
     try {
       const res = await axios.get(
-        "https://voyago-server-theta.vercel.app/api/tickets",
+        `${import.meta.env.VITE_API_URL}/api/tickets`,
       );
 
       setTickets(res.data || []);
@@ -29,7 +29,7 @@ const ManageTickets = () => {
   const handleStatus = async (id, status) => {
     try {
       await axios.patch(
-        `https://voyago-server-theta.vercel.app/api/tickets/status/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/tickets/status/${id}`,
         {
           status,
         },

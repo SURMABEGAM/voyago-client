@@ -25,7 +25,7 @@ const RequestedBookings = () => {
 
   useEffect(() => {
     axios
-      .get("https://voyago-server-theta.vercel.app/api/requested-booking")
+      .get(`${import.meta.env.VITE_API_URL}/api/requested-booking`)
       .then((res) => setBooking(res.data || []))
       .catch((err) => console.log(err));
   }, []);
@@ -52,7 +52,7 @@ const RequestedBookings = () => {
   const handleApprove = async (id) => {
     try {
       await axios.patch(
-        `https://voyago-server-theta.vercel.app/api/requested-booking/approve/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/requested-booking/approve/${id}`,
       );
 
       setBooking((prev) =>
@@ -68,7 +68,7 @@ const RequestedBookings = () => {
   const handleReject = async (id) => {
     try {
       await axios.patch(
-        `https://voyago-server-theta.vercel.app/api/requested-booking/reject/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/requested-booking/reject/${id}`,
       );
 
       setBooking((prev) =>

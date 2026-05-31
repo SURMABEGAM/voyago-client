@@ -13,7 +13,7 @@ const RevenueOverview = () => {
 
   useEffect(() => {
     axios
-      .get("https://voyago-server-theta.vercel.app/revenue-overview")
+      .get(`${import.meta.env.VITE_API_URL}/api/revenue-overview`)
       .then((res) => {
         setOverview(res.data);
       })

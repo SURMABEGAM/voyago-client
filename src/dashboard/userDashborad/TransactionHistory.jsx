@@ -10,7 +10,7 @@ const TransactionHistory = () => {
     if (user?.email) {
       axios
         .get(
-          `https://voyago-server-theta.vercel.app/transactions/${user.email}`,
+          `${import.meta.env.VITE_API_URL}/api/transactions/user/${user.email}`
         )
         .then((res) => setTransactions(res.data))
         .catch((err) => console.log(err));

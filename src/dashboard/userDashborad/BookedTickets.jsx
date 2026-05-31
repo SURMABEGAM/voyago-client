@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "../../Pages/AuthProvider";
+import { useAuth } from "../../Context/Authcontext";
 import UseAxiosSecure from "../../hooks/UseAxiosSecure";
 
 // ── Countdown hook ──────────────────────────────────────────

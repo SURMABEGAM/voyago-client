@@ -4,7 +4,7 @@ import { useRef, useEffect } from "react";
 const UseAxiosSecure = () => {
   const instanceRef = useRef(
     axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}`,
+      baseURL: import.meta.env.VITE_API_URL,
     }),
   );
 
@@ -17,6 +17,7 @@ const UseAxiosSecure = () => {
         }
         return config;
       },
+      (error) => Promise.reject(error), // ভালো অভ্যাসের জন্য এরর হ্যান্ডলিং যোগ করুন
     );
 
     return () => {

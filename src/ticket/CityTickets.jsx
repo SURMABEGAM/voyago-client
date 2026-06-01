@@ -62,7 +62,7 @@ const getTheme = (city) =>
     border: "rgba(249,115,22,0.3)",
   };
 
-// ─── Helpers ─────────────────────────────────────────────────────
+//─── Helpers ─────────────────────────────────────────────────────
 const isBookable = (departureDate) => {
   if (!departureDate) return false;
   const today = new Date();

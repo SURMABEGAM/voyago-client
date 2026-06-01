@@ -1,45 +1,45 @@
-import { createBrowserRouter } from 'react-router';
-import Root from './Root';
-import AdminRoute from './AdminRoute';
-import VendorRoute from './VendorRoute.jsx';
-import Error from '../error/Error';
-import Home from '../Pages/Home';
-import Login from '../user/Login';
-import Register from '../user/Register';
-import AllTickets from '../Pages/AllTickets';
+import { createBrowserRouter } from "react-router";
+import Root from "./Root";
+import AdminRoute from "./AdminRoute";
+import VendorRoute from "./VendorRoute.jsx";
+import Error from "../error/Error";
+import Home from "../Pages/Home";
+import Login from "../user/Login";
+import Register from "../user/Register";
+import AllTickets from "../Pages/AllTickets";
 
-import PrivateRoute from './PrivateRoute';
-import TransactionHistory from '../dashboard/userDashborad/TransactionHistory';
-import UserProfile from '../dashboard/userDashborad/UserProfile';
-import BookedTickets from '../dashboard/userDashborad/BookedTickets';
+import PrivateRoute from "./PrivateRoute";
+import TransactionHistory from "../dashboard/userDashborad/TransactionHistory";
+import UserProfile from "../dashboard/userDashborad/UserProfile";
+import BookedTickets from "../dashboard/userDashborad/BookedTickets";
 
-import AdminProfile from '../dashboard/adminDashborad/AdminProfile';
-import ManageUsers from '../dashboard/adminDashborad/ManageUsers';
-import ManageTickets from '../dashboard/adminDashborad/ManageTickets';
-import AdminPayments from '../dashboard/adminDashborad/AdminPayments.jsx';
+import AdminProfile from "../dashboard/adminDashborad/AdminProfile";
+import ManageUsers from "../dashboard/adminDashborad/ManageUsers";
+import ManageTickets from "../dashboard/adminDashborad/ManageTickets";
+import AdminPayments from "../dashboard/adminDashborad/AdminPayments.jsx";
 
-import ManuVendor from '../dashboard/vendorDashboard/ManuVendor.jsx';
-import AddTicket from '../dashboard/vendorDashboard/AddTicket.jsx';
-import MyAddedTickets from '../dashboard/vendorDashboard/MyAddedTickets.jsx';
-import RequestedBookings from '../dashboard/vendorDashboard/RequestedBookings.jsx';
-import RevenueOverview from '../dashboard/vendorDashboard/RevenueOverview.jsx';
+import ManuVendor from "../dashboard/vendorDashboard/ManuVendor.jsx";
+import AddTicket from "../dashboard/vendorDashboard/AddTicket.jsx";
+import MyAddedTickets from "../dashboard/vendorDashboard/MyAddedTickets.jsx";
+import RequestedBookings from "../dashboard/vendorDashboard/RequestedBookings.jsx";
+import RevenueOverview from "../dashboard/vendorDashboard/RevenueOverview.jsx";
 
-import Success from '../stripe/Success.jsx';
-import Cancel from '../stripe/Cancel.jsx';
-import DashboardLayout from '../layout/DashboardLayout';
-import ManuAdmin from '../dashboard/adminDashborad/ManuAdmin';
-import SearchResults from '../home/SearchResults.jsx';
-import ContactForm from '../home/Contact.jsx';
-import About from '../home/About.jsx';
-import CityTickets from '../ticket/CityTickets.jsx';
-import TicketDetails from '../Pages/TicketDetails.jsx';
-import MyBookings from '../dashboard/userDashborad/BookedTickets';
-import AdvertiseTickets from '../dashboard/adminDashborad/Advertisetickets .jsx';
-import VendorProfile from '../dashboard/vendorDashboard/VendorProfile.jsx';
+import Success from "../stripe/Success.jsx";
+import Cancel from "../stripe/Cancel.jsx";
+import DashboardLayout from "../layout/DashboardLayout";
+import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
+import SearchResults from "../home/SearchResults.jsx";
+import ContactForm from "../home/Contact.jsx";
+import About from "../home/About.jsx";
+import CityTickets from "../ticket/CityTickets.jsx";
+import TicketDetails from "../Pages/TicketDetails.jsx";
+import MyBookings from "../dashboard/userDashborad/BookedTickets";
+import AdvertiseTickets from "../dashboard/adminDashborad/Advertisetickets .jsx";
+import VendorProfile from "../dashboard/vendorDashboard/VendorProfile.jsx";
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     Component: Root,
     errorElement: <Error />,
     children: [
@@ -48,19 +48,19 @@ export const router = createBrowserRouter([
         Component: Home,
       },
       {
-        path: 'search',
+        path: "search",
         Component: SearchResults,
       },
       {
-        path: 'contact',
+        path: "contact",
         Component: ContactForm,
       },
       {
-        path: 'about',
+        path: "about",
         Component: About,
       },
       {
-        path: 'tickets',
+        path: "tickets",
         element: (
           <PrivateRoute>
             <AllTickets />
@@ -68,7 +68,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'tickets/:cityName',
+        path: "tickets/:cityName",
         element: (
           <PrivateRoute>
             <CityTickets />
@@ -76,7 +76,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'tickets/:cityName/:ticketId',
+        path: "tickets/:cityName/:ticketId",
         element: (
           <PrivateRoute>
             <TicketDetails />
@@ -86,7 +86,7 @@ export const router = createBrowserRouter([
 
       // ─── Dashboard ─────────────────────────────────────────
       {
-        path: '/dashboard',
+        path: "/dashboard",
         element: (
           <PrivateRoute>
             <DashboardLayout />
@@ -96,21 +96,21 @@ export const router = createBrowserRouter([
           // ── User Routes ──────────────────────────────────
 
           {
-            path: 'bookings',
+            path: "bookings",
             element: <MyBookings />,
           },
           {
-            path: 'user-profile',
+            path: "user-profile",
             element: <UserProfile />,
           },
           {
-            path: 'history',
+            path: "history",
             element: <TransactionHistory />,
           },
 
           // ── Admin Routes ─────────────────────────────────
           {
-            path: 'admin-profile',
+            path: "admin-profile",
             element: (
               <AdminRoute>
                 <AdminProfile />
@@ -118,7 +118,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: 'manage-users',
+            path: "manage-users",
             element: (
               <AdminRoute>
                 <ManageUsers />
@@ -126,7 +126,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: 'manage-tickets',
+            path: "manage-tickets",
             element: (
               <AdminRoute>
                 <ManageTickets />
@@ -134,7 +134,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: 'admin-payments',
+            path: "admin-payments",
             element: (
               <AdminRoute>
                 <AdminPayments />
@@ -142,7 +142,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: 'advertise-tickets',
+            path: "advertise-tickets",
             element: (
               <AdminRoute>
                 <AdvertiseTickets />
@@ -150,7 +150,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: 'manu-admin',
+            path: "manu-admin",
             element: (
               <AdminRoute>
                 <ManuAdmin />
@@ -160,10 +160,10 @@ export const router = createBrowserRouter([
 
           // ── Vendor Routes ────────────────────────────────
           {
-            path: 'vendor-dashboard',
+            path: "vendor-dashboard",
             children: [
               {
-                path: 'vendor-profile',
+                path: "vendor-profile",
                 element: (
                   <VendorRoute>
                     <VendorProfile />
@@ -171,7 +171,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: 'manu-vendor',
+                path: "manu-vendor",
                 element: (
                   <VendorRoute>
                     <ManuVendor />
@@ -179,7 +179,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: 'add-ticket',
+                path: "add-ticket",
                 element: (
                   <VendorRoute>
                     <AddTicket />
@@ -187,7 +187,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: 'my-tickets',
+                path: "my-tickets",
                 element: (
                   <VendorRoute>
                     <MyAddedTickets />
@@ -195,7 +195,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: 'requested-bookings',
+                path: "requested-bookings",
                 element: (
                   <VendorRoute>
                     <RequestedBookings />
@@ -203,7 +203,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: 'revenue',
+                path: "revenue",
                 element: (
                   <VendorRoute>
                     <RevenueOverview />
@@ -217,21 +217,21 @@ export const router = createBrowserRouter([
 
       // ─── Auth ───────────────────────────────────────────────
       {
-        path: '/login',
+        path: "/login",
         Component: Login,
       },
       {
-        path: '/register',
+        path: "/register",
         Component: Register,
       },
 
       // ─── Stripe ─────────────────────────────────────────────
       {
-        path: '/stripe/success',
+        path: "/stripe/success",
         element: <Success />,
       },
       {
-        path: '/stripe/cancel',
+        path: "/stripe/cancel",
         element: <Cancel />,
       },
     ],

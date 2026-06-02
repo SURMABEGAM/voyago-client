@@ -1,4 +1,3 @@
-import { createBrowserRouter } from "react-router";
 import Root from "./Root";
 import AdminRoute from "./AdminRoute";
 import VendorRoute from "./VendorRoute.jsx";
@@ -36,6 +35,7 @@ import TicketDetails from "../Pages/TicketDetails.jsx";
 import MyBookings from "../dashboard/userDashborad/BookedTickets";
 import AdvertiseTickets from "../dashboard/adminDashborad/Advertisetickets .jsx";
 import VendorProfile from "../dashboard/vendorDashboard/VendorProfile.jsx";
+import { createBrowserRouter } from "react-router";
 
 export const router = createBrowserRouter([
   {
@@ -199,6 +199,14 @@ export const router = createBrowserRouter([
                 element: (
                   <VendorRoute>
                     <RequestedBookings />
+                  </VendorRoute>
+                ),
+              },
+              {
+                path: "booked-tickets",
+                element: (
+                  <VendorRoute>
+                    <BookedTickets />
                   </VendorRoute>
                 ),
               },

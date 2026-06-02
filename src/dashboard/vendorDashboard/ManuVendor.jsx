@@ -1,52 +1,59 @@
-import { NavLink } from 'react-router';
+import { NavLink } from "react-router";
 import {
   FaUserTie,
   FaPlusCircle,
   FaListAlt,
   FaCalendarCheck,
   FaChartLine,
-} from 'react-icons/fa';
-import { FiChevronRight } from 'react-icons/fi';
+} from "react-icons/fa";
+import { FiChevronRight } from "react-icons/fi";
+import { MdConfirmationNumber } from "react-icons/md";
 
 const navItems = [
   {
-    to: '/dashboard/vendor-dashboard/vendor-profile',
+    to: "/dashboard/vendor-dashboard/vendor-profile",
     icon: <FaUserTie size={13} />,
-    label: 'Vendor Profile',
-    desc: 'Account & settings',
+    label: "Vendor Profile",
+    desc: "Account & settings",
   },
   {
-    to: '/dashboard/vendor-dashboard/add-ticket',
+    to: "/dashboard/vendor-dashboard/add-ticket",
     icon: <FaPlusCircle size={13} />,
-    label: 'Add Ticket',
-    desc: 'Create new listing',
+    label: "Add Ticket",
+    desc: "Create new listing",
   },
   {
-    to: '/dashboard/vendor-dashboard/my-tickets',
+    to: "/dashboard/vendor-dashboard/my-tickets",
     icon: <FaListAlt size={13} />,
-    label: 'My Added Tickets',
-    desc: 'Manage your tickets',
+    label: "My Added Tickets",
+    desc: "Manage your tickets",
   },
   {
-    to: '/dashboard/vendor-dashboard/requested-bookings',
+    to: "/dashboard/vendor-dashboard/requested-bookings",
     icon: <FaCalendarCheck size={13} />,
-    label: 'Requested Bookings',
-    desc: 'Pending approvals',
+    label: "Requested Bookings",
+    desc: "Pending approvals",
   },
   {
-    to: '/dashboard/vendor-dashboard/revenue',
+    to: "/dashboard/vendor-dashboard/booked-tickets",
+    icon: <MdConfirmationNumber size={13} />,
+    label: "Booked Tickets",
+    desc: "Approved bookings",
+  },
+  {
+    to: "/dashboard/vendor-dashboard/revenue",
     icon: <FaChartLine size={13} />,
-    label: 'Revenue Overview',
-    desc: 'Earnings & analytics',
+    label: "Revenue Overview",
+    desc: "Earnings & analytics",
   },
 ];
 
-const color = '#f97316';
-const activeLight = 'rgba(249,115,22,0.12)';
-const activeBorder = 'rgba(249,115,22,0.3)';
-const activeIcon = 'rgba(249,115,22,0.2)';
-const activeText = '#fdba74';
-const activeDesc = '#f97316';
+const color = "#f97316";
+const activeLight = "rgba(249,115,22,0.12)";
+const activeBorder = "rgba(249,115,22,0.3)";
+const activeIcon = "rgba(249,115,22,0.2)";
+const activeText = "#fdba74";
+const activeDesc = "#f97316";
 
 const ManuVendor = () => {
   return (
@@ -66,36 +73,36 @@ const ManuVendor = () => {
 
       <p
         className="text-[10px] font-semibold uppercase tracking-widest mb-2 px-1"
-        style={{ color: '#334155' }}
+        style={{ color: "#334155" }}
       >
         Vendor Panel
       </p>
 
       <ul className="space-y-1">
-        {navItems.map(item => (
+        {navItems.map((item) => (
           <li key={item.to} className="vendor-nav-item">
             <NavLink to={item.to}>
               {({ isActive }) => (
                 <div
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 relative overflow-hidden"
                   style={{
-                    background: isActive ? activeLight : 'transparent',
+                    background: isActive ? activeLight : "transparent",
                     border: isActive
                       ? `0.5px solid ${activeBorder}`
-                      : '0.5px solid transparent',
+                      : "0.5px solid transparent",
                   }}
-                  onMouseEnter={e => {
+                  onMouseEnter={(e) => {
                     if (!isActive) {
                       e.currentTarget.style.background =
-                        'rgba(255,255,255,0.04)';
+                        "rgba(255,255,255,0.04)";
                       e.currentTarget.style.borderColor =
-                        'rgba(255,255,255,0.08)';
+                        "rgba(255,255,255,0.08)";
                     }
                   }}
-                  onMouseLeave={e => {
+                  onMouseLeave={(e) => {
                     if (!isActive) {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.borderColor = 'transparent';
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.borderColor = "transparent";
                     }
                   }}
                 >
@@ -110,11 +117,11 @@ const ManuVendor = () => {
                     style={{
                       background: isActive
                         ? activeIcon
-                        : 'rgba(255,255,255,0.04)',
-                      color: isActive ? activeText : '#475569',
+                        : "rgba(255,255,255,0.04)",
+                      color: isActive ? activeText : "#475569",
                       border: isActive
                         ? `0.5px solid ${activeBorder}`
-                        : '0.5px solid rgba(255,255,255,0.08)',
+                        : "0.5px solid rgba(255,255,255,0.08)",
                     }}
                   >
                     {item.icon}
@@ -122,13 +129,13 @@ const ManuVendor = () => {
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-xs font-semibold leading-none"
-                      style={{ color: isActive ? activeText : '#94a3b8' }}
+                      style={{ color: isActive ? activeText : "#94a3b8" }}
                     >
                       {item.label}
                     </p>
                     <p
                       className="text-[10px] mt-0.5 truncate"
-                      style={{ color: isActive ? activeDesc : '#334155' }}
+                      style={{ color: isActive ? activeDesc : "#334155" }}
                     >
                       {item.desc}
                     </p>
@@ -136,9 +143,9 @@ const ManuVendor = () => {
                   <FiChevronRight
                     size={12}
                     style={{
-                      color: isActive ? color : 'rgba(255,255,255,0.1)',
+                      color: isActive ? color : "rgba(255,255,255,0.1)",
                       flexShrink: 0,
-                      transition: 'color 0.2s',
+                      transition: "color 0.2s",
                     }}
                   />
                 </div>

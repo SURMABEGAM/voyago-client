@@ -115,7 +115,7 @@ const Success = () => {
 
           <div className="flex gap-3 w-full">
             <button
-              onClick={() => navigate("/dashboard/bookings")}
+              onClick={() => navigate("/dashboard/my-bookings")}
               className="flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200"
               style={{
                 background: "linear-gradient(135deg,#2563eb,#1d4ed8)",

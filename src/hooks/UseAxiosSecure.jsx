@@ -1,5 +1,5 @@
-import axios from "axios";
-import { useRef, useEffect } from "react";
+import axios from 'axios';
+import { useRef, useEffect } from 'react';
 
 const UseAxiosSecure = () => {
   const instanceRef = useRef(
@@ -10,14 +10,13 @@ const UseAxiosSecure = () => {
 
   useEffect(() => {
     const reqInterceptor = instanceRef.current.interceptors.request.use(
-      (config) => {
-        const token = localStorage.getItem("token");
+      config => {
+        const token = localStorage.getItem('token');
         if (token) {
           config.headers.authorization = `Bearer ${token}`;
         }
         return config;
       },
-      (error) => Promise.reject(error), // ভালো অভ্যাসের জন্য এরর হ্যান্ডলিং যোগ করুন
     );
 
     return () => {

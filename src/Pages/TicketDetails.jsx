@@ -13,8 +13,6 @@ import {
   FaCheckCircle,
   FaCalendarAlt,
   FaArrowLeft,
-  FaStar,
-  FaUsers,
 } from 'react-icons/fa';
 import {
   MdWifi,
@@ -58,19 +56,12 @@ const cityColors = {
     border: 'rgba(236,72,153,0.3)',
   },
 };
-const fallbacks = [
-  {
+const getTheme = city =>
+  cityColors[city?.toLowerCase()] || {
     color: '#06b6d4',
     light: 'rgba(6,182,212,0.12)',
     border: 'rgba(6,182,212,0.3)',
-  },
-  {
-    color: '#84cc16',
-    light: 'rgba(132,204,22,0.12)',
-    border: 'rgba(132,204,22,0.3)',
-  },
-];
-const getTheme = city => cityColors[city?.toLowerCase()] || fallbacks[0];
+  };
 
 // ─── Helpers ──────────────────────────────────────────────────────
 const formatDate = d => {
@@ -82,6 +73,14 @@ const formatDate = d => {
     year: 'numeric',
   });
 };
+const formatTime12h = t => {
+  if (!t) return '—';
+  const [h, m] = t.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hour = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, '0')} ${ampm}`;
+};
+
 const formatDateShort = d => {
   if (!d) return '—';
   return new Date(d).toLocaleDateString('en-GB', {
@@ -97,13 +96,10 @@ const isBookable = departureDate => {
 };
 const getDaysUntil = departureDate => {
   if (!departureDate) return null;
-  const diff = Math.ceil(
+  return Math.ceil(
     (new Date(departureDate) - new Date()) / (1000 * 60 * 60 * 24),
   );
-  return diff;
 };
-
-// perk icon guesser
 const perkIcon = perk => {
   const p = perk.toLowerCase();
   if (/wifi|wi-fi/.test(p)) return <MdWifi size={13} />;
@@ -129,6 +125,289 @@ const Skeleton = () => (
   </div>
 );
 
+// ─── Booking Modal Component ──────────────────────────────────────
+const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
+  const [form, setForm] = useState({
+    quantity: 1,
+    customerName: user?.displayName || user?.name || '',
+    mobile: '',
+    boardingPoint: '',
+    dropPoint: '',
+  });
+  const [errors, setErrors] = useState({});
+
+  const set = (key, val) => {
+    setForm(f => ({ ...f, [key]: val }));
+    setErrors(e => ({ ...e, [key]: '' }));
+  };
+
+  const validate = () => {
+    const e = {};
+    if (!form.customerName.trim()) e.customerName = 'Name is required';
+    if (!form.mobile.trim()) e.mobile = 'Mobile number is required';
+    else if (!/^[0-9+\-\s]{7,15}$/.test(form.mobile.trim()))
+      e.mobile = 'Enter a valid mobile number';
+    if (!form.boardingPoint.trim())
+      e.boardingPoint = 'Boarding point is required';
+    if (!form.dropPoint.trim()) e.dropPoint = 'Drop point is required';
+    if (form.quantity < 1) e.quantity = 'At least 1 seat required';
+    if (form.quantity > ticket.quantity)
+      e.quantity = `Only ${ticket.quantity} seats available`;
+    return e;
+  };
+
+  const handleSubmit = () => {
+    const e = validate();
+    if (Object.keys(e).length > 0) {
+      setErrors(e);
+      return;
+    }
+    onConfirm(form);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(2,8,23,0.85)', backdropFilter: 'blur(8px)' }}
+      onClick={e => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        className="w-full max-w-md rounded-3xl overflow-hidden"
+        style={{
+          background: '#0f172a',
+          border: `1px solid ${theme.border}`,
+          boxShadow: `0 0 60px ${theme.color}18`,
+        }}
+      >
+        {/* Header */}
+        <div
+          className="px-6 py-4 flex items-center justify-between border-b"
+          style={{ borderColor: '#1e293b' }}
+        >
+          <div>
+            <h2 className="text-base font-bold" style={{ color: '#f8fafc' }}>
+              Book Your Seat
+            </h2>
+            <p className="text-xs mt-0.5" style={{ color: '#64748b' }}>
+              {ticket.from} → {ticket.to}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-lg font-bold transition"
+            style={{ background: '#1e293b', color: '#64748b' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#f87171')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Form */}
+        <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+          {/* Passenger Name */}
+          <Field
+            label="Passenger Name"
+            required
+            error={errors.customerName}
+            theme={theme}
+          >
+            <input
+              type="text"
+              value={form.customerName}
+              onChange={e => set('customerName', e.target.value)}
+              placeholder="Full name"
+              style={inputStyle(errors.customerName, theme)}
+            />
+          </Field>
+
+          {/* Mobile */}
+          <Field
+            label="Mobile Number"
+            required
+            error={errors.mobile}
+            theme={theme}
+          >
+            <input
+              type="tel"
+              value={form.mobile}
+              onChange={e => set('mobile', e.target.value)}
+              placeholder="+880 1XXX-XXXXXX"
+              style={inputStyle(errors.mobile, theme)}
+            />
+          </Field>
+
+          {/* Boarding Point */}
+          <Field
+            label="Boarding Point"
+            hint={`Where will you board near ${ticket.from}?`}
+            required
+            error={errors.boardingPoint}
+            theme={theme}
+          >
+            <input
+              type="text"
+              value={form.boardingPoint}
+              onChange={e => set('boardingPoint', e.target.value)}
+              placeholder={`e.g. ${ticket.from} Bus Stand`}
+              style={inputStyle(errors.boardingPoint, theme)}
+            />
+          </Field>
+
+          {/* Drop Point */}
+          <Field
+            label="Drop Point"
+            hint={`Where do you want to get off near ${ticket.to}?`}
+            required
+            error={errors.dropPoint}
+            theme={theme}
+          >
+            <input
+              type="text"
+              value={form.dropPoint}
+              onChange={e => set('dropPoint', e.target.value)}
+              placeholder={`e.g. ${ticket.to} Terminal`}
+              style={inputStyle(errors.dropPoint, theme)}
+            />
+          </Field>
+
+          {/* Quantity */}
+          <Field
+            label="Number of Seats"
+            hint={`Max ${ticket.quantity} seat${ticket.quantity !== 1 ? 's' : ''} available`}
+            error={errors.quantity}
+            theme={theme}
+          >
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => set('quantity', Math.max(1, form.quantity - 1))}
+                className="w-9 h-9 rounded-xl text-lg font-bold flex items-center justify-center transition"
+                style={{
+                  background: '#1e293b',
+                  color: form.quantity <= 1 ? '#334155' : '#94a3b8',
+                  border: '0.5px solid #334155',
+                }}
+                disabled={form.quantity <= 1}
+              >
+                −
+              </button>
+              <span
+                className="text-xl font-extrabold w-8 text-center"
+                style={{ color: theme.color }}
+              >
+                {form.quantity}
+              </span>
+              <button
+                onClick={() =>
+                  set('quantity', Math.min(ticket.quantity, form.quantity + 1))
+                }
+                className="w-9 h-9 rounded-xl text-lg font-bold flex items-center justify-center transition"
+                style={{
+                  background: '#1e293b',
+                  color:
+                    form.quantity >= ticket.quantity ? '#334155' : '#94a3b8',
+                  border: '0.5px solid #334155',
+                }}
+                disabled={form.quantity >= ticket.quantity}
+              >
+                +
+              </button>
+              <span className="text-sm ml-1" style={{ color: '#475569' }}>
+                × ৳{ticket.price} ={' '}
+                <span style={{ color: theme.color, fontWeight: 700 }}>
+                  ৳{(ticket.price * form.quantity).toLocaleString()}
+                </span>
+              </span>
+            </div>
+          </Field>
+        </div>
+
+        {/* Footer */}
+        <div
+          className="px-6 py-4 border-t flex gap-3"
+          style={{ borderColor: '#1e293b' }}
+        >
+          <button
+            onClick={onClose}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition"
+            style={{
+              background: '#1e293b',
+              color: '#64748b',
+              border: '0.5px solid #334155',
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="flex-2 flex-grow flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl text-sm font-bold text-white transition disabled:opacity-60 disabled:cursor-wait"
+            style={{ background: theme.color }}
+          >
+            {loading ? (
+              <>
+                <span
+                  className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                  style={{ animation: 'spin 0.6s linear infinite' }}
+                />
+                Processing…
+              </>
+            ) : (
+              <>
+                <MdOutlineConfirmationNumber size={15} />
+                Confirm Booking
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Field wrapper ────────────────────────────────────────────────
+const Field = ({ label, hint, required, error, theme, children }) => (
+  <div>
+    <label
+      className="block text-xs font-semibold mb-1.5"
+      style={{ color: '#94a3b8' }}
+    >
+      {label}
+      {required && (
+        <span style={{ color: theme.color }} className="ml-0.5">
+          *
+        </span>
+      )}
+    </label>
+    {hint && (
+      <p className="text-[10px] mb-1" style={{ color: '#475569' }}>
+        {hint}
+      </p>
+    )}
+    {children}
+    {error && (
+      <p
+        className="text-[10px] mt-1 flex items-center gap-1"
+        style={{ color: '#f87171' }}
+      >
+        <FiAlertCircle size={9} /> {error}
+      </p>
+    )}
+  </div>
+);
+
+const inputStyle = (error, theme) => ({
+  width: '100%',
+  background: '#0a1120',
+  border: `0.5px solid ${error ? 'rgba(239,68,68,0.5)' : '#1e293b'}`,
+  borderRadius: 10,
+  padding: '10px 12px',
+  color: '#e2e8f0',
+  fontSize: 13,
+  outline: 'none',
+  transition: 'border-color 0.15s',
+});
+
 // ─── Main ─────────────────────────────────────────────────────────
 const TicketDetails = () => {
   const { cityName, ticketId } = useParams();
@@ -139,6 +418,7 @@ const TicketDetails = () => {
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
   const [imgLoaded, setImgLoaded] = useState(false);
 
@@ -150,16 +430,15 @@ const TicketDetails = () => {
       .get(`/api/tickets/${ticketId}`)
       .then(res => setTicket(res.data))
       .catch(err => {
-        if (err.response?.status === 404) {
+        if (err.response?.status === 404)
           setError('Ticket not found or unavailable.');
-        } else {
-          setError('Failed to load ticket. Please try again.');
-        }
+        else setError('Failed to load ticket. Please try again.');
       })
       .finally(() => setLoading(false));
   }, [ticketId, axiosSecure]);
 
-  const handleBook = async () => {
+  // ── Open modal or redirect to login ──────────────────────────
+  const handleBook = () => {
     if (!user?.email) {
       return Swal.fire({
         title: 'Login Required',
@@ -171,21 +450,57 @@ const TicketDetails = () => {
         confirmButtonText: 'Go to Login',
       }).then(r => r.isConfirmed && navigate('/login'));
     }
+    setShowModal(true);
+  };
 
+  // ── Confirm booking from modal ────────────────────────────────
+  const handleConfirm = async ({
+    quantity,
+    customerName,
+    mobile,
+    boardingPoint,
+    dropPoint,
+  }) => {
     setBooking(true);
     try {
-      const res = await axiosSecure.post('/create-checkout-session', {
+      await axiosSecure.post('/api/booking', {
         ticketId: ticket._id,
-        quantity: 1,
+        title: ticket.title,
+        from: ticket.from,
+        to: ticket.to,
+        busType: ticket.busType,
+        quantity: Number(quantity),
+        price: ticket.price * Number(quantity),
+        unitPrice: ticket.price,
+        email: user.email,
+        customerName,
+        mobile,
+        boardingPoint,
+        dropPoint,
+        departureDate: ticket.departureDate,
+        departureTime: ticket.departureTime,
+        status: 'Pending',
       });
-      if (res.data?.url) window.location.href = res.data.url;
+
+      setShowModal(false);
+
+      await Swal.fire({
+        title: 'Booking Requested! 🎉',
+        text: 'Your booking is pending vendor approval. Check My Booked Tickets for updates.',
+        icon: 'success',
+        background: '#0f172a',
+        color: '#f8fafc',
+        confirmButtonColor: theme.color,
+        confirmButtonText: 'View My Bookings',
+      });
+
+      navigate('/dashboard/my-bookings');
     } catch (err) {
       Swal.fire({
-        title: 'Payment Error',
+        title: 'Booking Failed',
         text:
           err?.response?.data?.message ||
-          err?.response?.data?.error ||
-          'Could not initiate payment. Please try again.',
+          'Could not place booking. Please try again.',
         icon: 'error',
         background: '#0f172a',
         color: '#f8fafc',
@@ -195,12 +510,12 @@ const TicketDetails = () => {
       setBooking(false);
     }
   };
+
   const soldOut = ticket?.quantity === 0;
   const bookable = ticket ? isBookable(ticket.departureDate) : false;
   const daysUntil = ticket ? getDaysUntil(ticket.departureDate) : null;
   const isLow = ticket?.quantity > 0 && ticket.quantity <= 5;
   const canBook = !soldOut && bookable;
-
   const cityLabel = cityName
     ? cityName.charAt(0).toUpperCase() + cityName.slice(1)
     : '';
@@ -217,29 +532,39 @@ const TicketDetails = () => {
           from { opacity: 0; transform: translateY(18px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes shimmer {
-          0%   { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        .fade-up { animation: fadeUp 0.45s ease both; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .fade-up   { animation: fadeUp 0.45s ease both; }
         .fade-up-1 { animation: fadeUp 0.45s 0.05s ease both; }
         .fade-up-2 { animation: fadeUp 0.45s 0.12s ease both; }
         .fade-up-3 { animation: fadeUp 0.45s 0.20s ease both; }
         .fade-up-4 { animation: fadeUp 0.45s 0.28s ease both; }
         .fade-up-5 { animation: fadeUp 0.45s 0.36s ease both; }
+        input:focus { border-color: ${theme.color} !important; }
       `}</style>
+
+      {/* Booking Modal */}
+      {showModal && ticket && (
+        <BookingModal
+          ticket={ticket}
+          user={user}
+          theme={theme}
+          onClose={() => !booking && setShowModal(false)}
+          onConfirm={handleConfirm}
+          loading={booking}
+        />
+      )}
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         {/* Back button */}
         <button
           onClick={() => navigate(-1)}
-          className="fade-up flex items-center gap-2 mb-6 text-sm font-medium transition-all duration-200 group"
+          className="fade-up flex items-center gap-2 mb-6 text-sm font-medium transition-all duration-200"
           style={{ color: '#64748b' }}
           onMouseEnter={e => (e.currentTarget.style.color = theme.color)}
           onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}
         >
           <span
-            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200"
+            className="w-8 h-8 rounded-xl flex items-center justify-center"
             style={{ background: '#0f172a', border: '0.5px solid #1e293b' }}
           >
             <FiArrowLeft size={14} />
@@ -247,10 +572,8 @@ const TicketDetails = () => {
           Back to {cityLabel} routes
         </button>
 
-        {/* Loading */}
         {loading && <Skeleton />}
 
-        {/* Error */}
         {error && (
           <div className="flex flex-col items-center justify-center py-32 fade-up">
             <div
@@ -279,7 +602,6 @@ const TicketDetails = () => {
           </div>
         )}
 
-        {/* Main content */}
         {!loading && !error && ticket && (
           <div className="space-y-5">
             {/* ── Hero card ─────────────────────────────────────── */}
@@ -287,7 +609,6 @@ const TicketDetails = () => {
               className="fade-up-1 relative rounded-3xl overflow-hidden"
               style={{ border: `0.5px solid ${theme.border}` }}
             >
-              {/* Background image or gradient */}
               {ticket.image ? (
                 <div className="relative h-64 sm:h-80 overflow-hidden">
                   <img
@@ -315,7 +636,6 @@ const TicketDetails = () => {
                     background: `linear-gradient(135deg, ${theme.light}, rgba(2,8,23,0.95))`,
                   }}
                 >
-                  {/* decorative rings */}
                   {[160, 240, 320].map((s, i) => (
                     <div
                       key={i}
@@ -339,7 +659,6 @@ const TicketDetails = () => {
                 </div>
               )}
 
-              {/* Overlay info (bottom of image) */}
               <div
                 style={{
                   position: ticket.image ? 'absolute' : 'relative',
@@ -350,7 +669,6 @@ const TicketDetails = () => {
                   padding: '24px 28px',
                 }}
               >
-                {/* Badge row */}
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <span
                     className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
@@ -360,21 +678,8 @@ const TicketDetails = () => {
                       border: `0.5px solid ${theme.border}`,
                     }}
                   >
-                    <FaMapMarkerAlt size={10} />
-                    {cityLabel} · Bus Route
+                    <FaMapMarkerAlt size={10} /> {cityLabel} · Bus Route
                   </span>
-                  {ticket.approved && (
-                    <span
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
-                      style={{
-                        background: 'rgba(16,185,129,0.15)',
-                        color: '#34d399',
-                        border: '0.5px solid rgba(16,185,129,0.3)',
-                      }}
-                    >
-                      <FaCheckCircle size={9} /> Verified Operator
-                    </span>
-                  )}
                   {soldOut && (
                     <span
                       className="px-3 py-1 rounded-full text-xs font-semibold"
@@ -411,12 +716,10 @@ const TicketDetails = () => {
                           border: '0.5px solid rgba(239,68,68,0.25)',
                         }}
                       >
-                        Departs in {daysUntil === 0 ? 'today' : `${daysUntil}d`}
+                        Departs {daysUntil === 0 ? 'today' : `in ${daysUntil}d`}
                       </span>
                     )}
                 </div>
-
-                {/* Title */}
                 <h1
                   className="text-2xl sm:text-3xl font-extrabold leading-tight mb-1"
                   style={{ color: '#f8fafc', letterSpacing: '-0.02em' }}
@@ -435,7 +738,6 @@ const TicketDetails = () => {
               style={{ background: '#0f172a', border: '0.5px solid #1e293b' }}
             >
               <div className="flex items-center justify-between gap-4">
-                {/* From */}
                 <div className="flex-1">
                   <p
                     className="text-[10px] uppercase tracking-widest mb-1"
@@ -468,12 +770,11 @@ const TicketDetails = () => {
                       className="text-sm mt-1 font-semibold"
                       style={{ color: '#94a3b8' }}
                     >
-                      {ticket.departureTime}
+                      {formatTime12h(ticket.departureTime)}
                     </p>
                   )}
                 </div>
 
-                {/* Arrow */}
                 <div className="flex flex-col items-center gap-1">
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center"
@@ -489,7 +790,6 @@ const TicketDetails = () => {
                   </p>
                 </div>
 
-                {/* To */}
                 <div className="flex-1 text-right">
                   <p
                     className="text-[10px] uppercase tracking-widest mb-1"
@@ -527,12 +827,12 @@ const TicketDetails = () => {
                   ),
                   label: 'Departure Date',
                   value: formatDateShort(ticket.departureDate),
-                  sub: formatDate(ticket.departureDate).split(',')[0], // weekday
+                  sub: formatDate(ticket.departureDate).split(',')[0],
                 },
                 {
                   icon: <FaClock size={14} style={{ color: theme.color }} />,
                   label: 'Departure Time',
-                  value: ticket.departureTime || '—',
+                  value: formatTime12h(ticket.departureTime),
                   sub:
                     daysUntil !== null && daysUntil >= 0
                       ? daysUntil === 0
@@ -617,9 +917,8 @@ const TicketDetails = () => {
               ))}
             </div>
 
-            {/* ── Amenities + Description ───────────────────────── */}
+            {/* ── Perks + Description ───────────────────────────── */}
             <div className="fade-up-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Perks */}
               {ticket.perks?.length > 0 && (
                 <div
                   className="rounded-2xl p-5"
@@ -656,8 +955,6 @@ const TicketDetails = () => {
                   </div>
                 </div>
               )}
-
-              {/* Description / extra info */}
               <div
                 className="rounded-2xl p-5"
                 style={{ background: '#0f172a', border: '0.5px solid #1e293b' }}
@@ -681,8 +978,6 @@ const TicketDetails = () => {
                       No additional description provided.
                     </p>
                   )}
-
-                  {/* Extra fields if present */}
                   {ticket.stops?.length > 0 && (
                     <div className="mt-3">
                       <p
@@ -722,7 +1017,7 @@ const TicketDetails = () => {
               }}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-                {/* Price block */}
+                {/* Price */}
                 <div>
                   <p
                     className="text-[11px] uppercase tracking-widest mb-1"
@@ -754,7 +1049,7 @@ const TicketDetails = () => {
                   )}
                 </div>
 
-                {/* Action block */}
+                {/* Button */}
                 <div className="flex flex-col gap-2 w-full sm:w-auto min-w-[200px]">
                   {canBook ? (
                     <button
@@ -812,7 +1107,6 @@ const TicketDetails = () => {
                     </div>
                   )}
 
-                  {/* Notice */}
                   {!soldOut &&
                     !bookable &&
                     daysUntil !== null &&
@@ -830,14 +1124,14 @@ const TicketDetails = () => {
                       className="text-[11px] text-center"
                       style={{ color: '#475569' }}
                     >
-                      Secure checkout · Instant confirmation
+                      Booking pending · Vendor approval required
                     </p>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* ── Related navigation ────────────────────────────── */}
+            {/* ── Navigation ────────────────────────────────────── */}
             <div className="flex items-center justify-between pt-2 pb-6">
               <button
                 onClick={() => navigate(`/tickets/${cityName}`)}
@@ -856,10 +1150,8 @@ const TicketDetails = () => {
                   e.currentTarget.style.color = '#64748b';
                 }}
               >
-                <FiArrowLeft size={13} />
-                All {cityLabel} tickets
+                <FiArrowLeft size={13} /> All {cityLabel} tickets
               </button>
-
               <button
                 onClick={() => navigate('/tickets')}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200"
@@ -877,16 +1169,12 @@ const TicketDetails = () => {
                   e.currentTarget.style.color = '#64748b';
                 }}
               >
-                Browse all routes
-                <FiArrowRight size={13} />
+                Browse all routes <FiArrowRight size={13} />
               </button>
             </div>
           </div>
         )}
       </div>
-
-      {/* spinner keyframe */}
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 };

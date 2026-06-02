@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -7,14 +7,15 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   updateProfile,
-} from "firebase/auth";
-import { AuthContext } from "../Context/AuthContext";
-import { auth } from "../firebase/Firebase.init";
-import UseAxiosSecure from "../hooks/UseAxiosSecure";
+} from 'firebase/auth';
+import { AuthContext } from '../Context/AuthContext';
+import { auth } from '../firebase/Firebase.init';
+import UseAxiosSecure from '../hooks/UseAxiosSecure';
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
   const createUser = (email, password) =>
@@ -26,51 +27,31 @@ const AuthProvider = ({ children }) => {
   const googleProvider = new GoogleAuthProvider();
   const googleLogin = () => signInWithPopup(auth, googleProvider);
 
-  const signOutUser = () => {
-    localStorage.removeItem("token"); // ← logout এ token remove
-    return signOut(auth);
+  const signOutUser = () => signOut(auth);
+
+  const updateUserProfile = profile => {
+    return updateProfile(auth.currentUser, profile);
   };
 
-  const updateUserProfile = (profile) =>
-    updateProfile(auth.currentUser, profile);
-
+  // 🔥 Auth observer
   const axiosSecure = UseAxiosSecure();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async currentUser => {
+      //
       setUser(currentUser);
-
       if (currentUser?.email) {
         try {
-          // ── JWT token নাও backend থেকে ──
-          const tokenRes = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/google-login`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: currentUser.email,
-                name: currentUser.displayName || "",
-              }),
-            },
-          );
-          const tokenData = await tokenRes.json();
-          if (tokenData?.token) {
-            localStorage.setItem("token", tokenData.token); // ← token save
-            setRole(tokenData.role);
-          }
-
-          // ── Role fetch ──
           const res = await axiosSecure.get(`/users/role/${currentUser.email}`);
+          console.log('Role fetch response:', res.data);
           setRole(res.data.role);
           setLoading(false);
         } catch (error) {
-          console.error("Auth error", error);
-          setRole("user");
+          console.error('Role fetch error', error);
+          setRole('user');
           setLoading(false);
         }
       } else {
-        localStorage.removeItem("token");
         setRole(null);
         setLoading(false);
       }
@@ -96,5 +77,4 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
   );
 };
-
 export default AuthProvider;

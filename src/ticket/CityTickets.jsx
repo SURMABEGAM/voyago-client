@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Swal from "sweetalert2";
 import UseAxiosSecure from "../hooks/UseAxiosSecure";
-import { AuthContext } from "../Context/AutContext";
+import { AuthContext } from "../Context/AuthContext";
 import {
   FaBus,
   FaMapMarkerAlt,

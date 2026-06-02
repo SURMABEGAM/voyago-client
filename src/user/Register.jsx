@@ -14,7 +14,7 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { HiSparkles, HiTicket } from "react-icons/hi2";
 import registerImg from "../assets/register (7).png";
-import { AuthContext } from "../Context/AutContext";
+import { AuthContext } from "../Context/AuthContext";
 
 const Register = () => {
   const navigate = useNavigate();

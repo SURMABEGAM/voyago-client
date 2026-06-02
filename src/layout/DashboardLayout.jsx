@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Navigate, NavLink, Outlet } from "react-router";
 import { FaBus, FaHome, FaUserShield, FaBars, FaTimes } from "react-icons/fa";
-import { AuthContext } from "../Context/AutContext";
+import { AuthContext } from "../Context/AuthContext";
 import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
 import ManuVendor from "../dashboard/vendorDashboard/ManuVendor";
 import ManuUser from "../dashboard/userDashborad/ManuUser";

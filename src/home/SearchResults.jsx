@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 
 import axios from "axios";
 import Swal from "sweetalert2";
-import { AuthContext } from "../Context/AutContext";
+import { AuthContext } from "../Context/AuthContext";
 import {
   FaBus,
   FaCalendarAlt,

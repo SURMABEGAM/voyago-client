@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import UseAxiosSecure from "../../hooks/UseAxiosSecure";
-import { useAuth } from "../../Context/AutContext";
+import { useAuth } from "../../Context/AuthContext";
 
 const TransactionHistory = () => {
   const [transactions, setTransactions] = useState([]);

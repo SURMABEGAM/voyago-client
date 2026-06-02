@@ -7,7 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { HiTicket } from "react-icons/hi2";
-import { AuthContext } from "../Context/AutContext";
+import { AuthContext } from "../Context/AuthContext";
 
 const Login = () => {
   const { googleLogin, resetPassword, setUser, setLoading, signInUser } =

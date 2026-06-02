@@ -26,7 +26,6 @@ const Login = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // ── Role based redirect ──────────────────────────────────
   const redirectByRole = (role) => {
     if (role === "admin") return navigate("/");
     if (role === "vendor") return navigate("/");
@@ -38,12 +37,14 @@ const Login = () => {
     setLoading(true);
     const toastId = toast.loading("Signing you in...");
     try {
-      await signInUser(data.email, data.password);
-
+      // ১. Backend login first — get JWT token
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/login`,
         data,
       );
+
+      // ২. Then Firebase login
+      await signInUser(data.email, data.password);
 
       localStorage.setItem("token", res.data.token);
       setUser({
@@ -72,6 +73,7 @@ const Login = () => {
   // ── Google Login ─────────────────────────────────────────
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
+    const toastId = toast.loading("Signing in with Google...");
     try {
       const userCredential = await googleLogin();
       const email = userCredential.user.email;
@@ -85,12 +87,15 @@ const Login = () => {
       localStorage.setItem("token", res.data.token);
       setUser({ role: res.data.role, email, token: res.data.token });
 
-      toast.success(`Welcome back, ${name || email}!`);
+      toast.success(`Welcome, ${name || email}!`, { id: toastId });
       redirectByRole(res.data.role);
       window.location.reload();
     } catch (err) {
       console.error("Google login failed:", err);
-      toast.error("Google Login Failed. Try again.");
+      toast.error(
+        err.response?.data?.message || "Google Login Failed. Try again.",
+        { id: toastId },
+      );
     } finally {
       setGoogleLoading(false);
     }
@@ -138,14 +143,12 @@ const Login = () => {
           font-family: 'Plus Jakarta Sans', sans-serif;
           overflow: hidden;
         }
-
         @media (max-width: 768px) {
           .login-root { grid-template-columns: 1fr; }
           .login-left { display: none !important; }
           .login-right { padding: 32px 24px; }
         }
 
-        /* ---- LEFT PANEL ---- */
         .login-left {
           position: relative;
           overflow: hidden;
@@ -153,34 +156,14 @@ const Login = () => {
           align-items: center;
           justify-content: center;
         }
-
-        .login-left::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-        
-          pointer-events: none;
-          z-index: 1;
-        }
-
         .login-orb {
           position: absolute;
           border-radius: 50%;
           filter: blur(60px);
           animation: orb-float 8s ease-in-out infinite;
         }
-        .login-orb-1 {
-          width: 300px; height: 300px;
-        
-          top: -80px; left: -80px;
-        }
-        .login-orb-2 {
-          width: 200px; height: 200px;
-        
-          bottom: -60px; right: -60px;
-          animation-delay: -4s;
-        }
-
+        .login-orb-1 { width: 300px; height: 300px; top: -80px; left: -80px; }
+        .login-orb-2 { width: 200px; height: 200px; bottom: -60px; right: -60px; animation-delay: -4s; }
         @keyframes orb-float {
           0%, 100% { transform: translate(0,0) scale(1); }
           50%       { transform: translate(20px,-20px) scale(1.05); }
@@ -195,7 +178,6 @@ const Login = () => {
           object-fit: cover;
           animation: img-rise 0.8s cubic-bezier(0.22,1,0.36,1) both;
         }
-
         @keyframes img-rise {
           from { opacity: 0; transform: translateY(30px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -216,19 +198,12 @@ const Login = () => {
           z-index: 3;
           animation: fade-up 1s 0.4s both;
         }
-
         @keyframes fade-up {
           from { opacity: 0; transform: translate(-50%, 16px); }
           to   { opacity: 1; transform: translate(-50%, 0); }
         }
+        .login-badge span { color: #a5b4fc; font-size: 13px; font-weight: 500; }
 
-        .login-badge span {
-          color: #a5b4fc;
-          font-size: 13px;
-          font-weight: 500;
-        }
-
-        /* ---- RIGHT PANEL ---- */
         .login-right {
           display: flex;
           align-items: center;
@@ -237,96 +212,53 @@ const Login = () => {
           position: relative;
         }
 
-        .login-right::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0;
-          width: 1px;
-          height: 100%;
-        }
-
         .login-card {
           width: 100%;
           max-width: 420px;
           animation: card-in 0.7s cubic-bezier(0.22,1,0.36,1) both;
         }
-
         @keyframes card-in {
           from { opacity: 0; transform: translateX(24px); }
           to   { opacity: 1; transform: translateX(0); }
         }
 
-        .login-form-logo {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 28px;
-        }
-
+        .login-form-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; }
         .login-logo-dot {
           width: 32px; height: 32px;
           border-radius: 10px;
           background: linear-gradient(135deg, #6366f1, #a855f7);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 16px;
-          color: #fff;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 16px; color: #fff;
           box-shadow: 0 0 20px rgba(99,102,241,0.5);
         }
-
         .login-logo-text {
           font-family: 'Syne', sans-serif;
-          font-size: 18px;
-          font-weight: 700;
-          color: #f1f5f9;
-          letter-spacing: -0.3px;
+          font-size: 18px; font-weight: 700;
+          color: #f1f5f9; letter-spacing: -0.3px;
         }
 
         .login-heading {
           font-family: 'Syne', sans-serif;
-          font-size: 30px;
-          font-weight: 800;
-          color: #f8fafc;
-          line-height: 1.15;
-          margin-bottom: 6px;
-          letter-spacing: -0.8px;
+          font-size: 30px; font-weight: 800;
+          color: #f8fafc; line-height: 1.15;
+          margin-bottom: 6px; letter-spacing: -0.8px;
         }
-
-        .login-sub {
-          color: #64748b;
-          font-size: 14px;
-          margin-bottom: 28px;
-        }
-
-        .login-sub a {
-          color: #818cf8;
-          text-decoration: none;
-          font-weight: 500;
-          transition: color 0.2s;
-        }
+        .login-sub { color: #64748b; font-size: 14px; margin-bottom: 28px; }
+        .login-sub a { color: #818cf8; text-decoration: none; font-weight: 500; transition: color 0.2s; }
         .login-sub a:hover { color: #a5b4fc; }
 
-        /* ---- GOOGLE BTN ---- */
         .login-google-btn {
           width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
+          display: flex; align-items: center; justify-content: center; gap: 10px;
           padding: 12px;
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.1);
           border-radius: 12px;
-          color: #e2e8f0;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s;
+          color: #e2e8f0; font-size: 14px; font-weight: 500;
+          cursor: pointer; transition: all 0.2s;
           font-family: 'Plus Jakarta Sans', sans-serif;
           margin-bottom: 20px;
         }
-
         .login-google-btn:hover {
           background: rgba(255,255,255,0.08);
           border-color: rgba(255,255,255,0.18);
@@ -334,147 +266,69 @@ const Login = () => {
         }
         .login-google-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        /* ---- DIVIDER ---- */
-        .login-divider {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 20px;
-        }
-        .login-divider-line {
-          flex: 1;
-          height: 1px;
-          background: rgba(255,255,255,0.07);
-        }
-        .login-divider-text {
-          color: #475569;
-          font-size: 12px;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-        }
+        .login-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .login-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+        .login-divider-text { color: #475569; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
 
-        /* ---- FIELDS ---- */
-        .login-field-group {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          margin-bottom: 8px;
-        }
-
+        .login-field-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 8px; }
         .login-field-wrap { position: relative; }
-
         .login-field-icon {
-          position: absolute;
-          left: 14px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #475569;
-          font-size: 16px;
-          pointer-events: none;
-          transition: color 0.2s;
+          position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+          color: #475569; font-size: 16px; pointer-events: none; transition: color 0.2s;
         }
-
         .login-field-input {
           width: 100%;
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
           border-radius: 12px;
           padding: 13px 14px 13px 42px;
-          color: #f1f5f9;
-          font-size: 14px;
+          color: #f1f5f9; font-size: 14px;
           font-family: 'Plus Jakarta Sans', sans-serif;
-          outline: none;
-          transition: all 0.2s;
-          box-sizing: border-box;
+          outline: none; transition: all 0.2s; box-sizing: border-box;
         }
-
         .login-field-input::placeholder { color: #475569; }
-
         .login-field-input:focus {
           border-color: rgba(99,102,241,0.5);
           background: rgba(99,102,241,0.06);
           box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
         }
-
         .login-field-wrap:focus-within .login-field-icon { color: #818cf8; }
+        .login-field-input.input-error { border-color: rgba(244,63,94,0.5); }
+        .login-error-msg { color: #f43f5e; font-size: 12px; margin-top: 5px; padding-left: 4px; }
 
-        .login-field-input.input-error {
-          border-color: rgba(244,63,94,0.5);
-        }
-
-        .login-error-msg {
-          color: #f43f5e;
-          font-size: 12px;
-          margin-top: 5px;
-          padding-left: 4px;
-        }
-
-        /* ---- EYE TOGGLE ---- */
         .login-eye-toggle {
-          position: absolute;
-          right: 14px;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
-          border: none;
-          color: #475569;
-          cursor: pointer;
-          padding: 4px;
-          display: flex;
-          align-items: center;
-          font-size: 17px;
-          transition: color 0.2s;
+          position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+          background: none; border: none; color: #475569;
+          cursor: pointer; padding: 4px;
+          display: flex; align-items: center; font-size: 17px; transition: color 0.2s;
         }
         .login-eye-toggle:hover { color: #818cf8; }
 
-        /* ---- FORGOT ---- */
         .forgot-link {
-          display: block;
-          text-align: right;
-          color: #818cf8;
-          font-size: 13px;
-          font-weight: 500;
-          cursor: pointer;
-          margin: 10px 0 20px;
-          text-decoration: none;
-          transition: color 0.2s;
-          background: none;
-          border: none;
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          width: 100%;
+          display: block; text-align: right;
+          color: #818cf8; font-size: 13px; font-weight: 500;
+          cursor: pointer; margin: 10px 0 20px;
+          text-decoration: none; transition: color 0.2s;
+          background: none; border: none;
+          font-family: 'Plus Jakarta Sans', sans-serif; width: 100%;
         }
         .forgot-link:hover { color: #a5b4fc; }
 
-        /* ---- SUBMIT BTN ---- */
         .login-submit-btn {
-          width: 100%;
-          padding: 14px;
+          width: 100%; padding: 14px;
           background: linear-gradient(135deg, #6366f1, #8b5cf6);
-          border: none;
-          border-radius: 12px;
-          color: #fff;
-          font-size: 15px;
-          font-weight: 600;
+          border: none; border-radius: 12px;
+          color: #fff; font-size: 15px; font-weight: 600;
           font-family: 'Plus Jakarta Sans', sans-serif;
           cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          position: relative;
-          overflow: hidden;
-          transition: all 0.2s;
-          box-shadow: 0 4px 24px rgba(99,102,241,0.35);
-          letter-spacing: -0.1px;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          position: relative; overflow: hidden; transition: all 0.2s;
+          box-shadow: 0 4px 24px rgba(99,102,241,0.35); letter-spacing: -0.1px;
         }
         .login-submit-btn::before {
-          content: '';
-          position: absolute;
-          inset: 0;
+          content: ''; position: absolute; inset: 0;
           background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
-          opacity: 0;
-          transition: opacity 0.2s;
+          opacity: 0; transition: opacity 0.2s;
         }
         .login-submit-btn:hover::before { opacity: 1; }
         .login-submit-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(99,102,241,0.45); }
@@ -490,18 +344,8 @@ const Login = () => {
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .login-bottom-link {
-          text-align: center;
-          margin-top: 22px;
-          color: #475569;
-          font-size: 14px;
-        }
-        .login-bottom-link a {
-          color: #818cf8;
-          text-decoration: none;
-          font-weight: 500;
-          transition: color 0.2s;
-        }
+        .login-bottom-link { text-align: center; margin-top: 22px; color: #475569; font-size: 14px; }
+        .login-bottom-link a { color: #818cf8; text-decoration: none; font-weight: 500; transition: color 0.2s; }
         .login-bottom-link a:hover { color: #a5b4fc; }
       `}</style>
 
@@ -602,7 +446,6 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Forgot password */}
               <button
                 type="button"
                 className="forgot-link"
@@ -620,7 +463,8 @@ const Login = () => {
                   <div className="login-spinner" />
                 ) : (
                   <>
-                    Sign In <FiArrowRight size={16} />
+                    {" "}
+                    Sign In <FiArrowRight size={16} />{" "}
                   </>
                 )}
               </button>

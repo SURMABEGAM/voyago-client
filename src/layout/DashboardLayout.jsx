@@ -1,35 +1,35 @@
-import { useContext, useState } from 'react';
-import { Navigate, NavLink, Outlet } from 'react-router';
-import { FaBus, FaHome, FaUserShield, FaBars, FaTimes } from 'react-icons/fa';
-import { AuthContext } from '../Context/AuthContext';
-import ManuAdmin from '../dashboard/adminDashborad/ManuAdmin';
-import ManuVendor from '../dashboard/vendorDashboard/ManuVendor';
-import ManuUser from '../dashboard/userDashborad/ManuUser';
+import { useContext, useState } from "react";
+import { Navigate, NavLink, Outlet } from "react-router";
+import { FaBus, FaHome, FaUserShield, FaBars, FaTimes } from "react-icons/fa";
+import { AuthContext } from "../Context/AutContext";
+import ManuAdmin from "../dashboard/adminDashborad/ManuAdmin";
+import ManuVendor from "../dashboard/vendorDashboard/ManuVendor";
+import ManuUser from "../dashboard/userDashborad/ManuUser";
 
 const roleAccent = {
   admin: {
-    color: '#a855f7',
-    light: 'rgba(168,85,247,0.12)',
-    border: 'rgba(168,85,247,0.3)',
-    glow: 'rgba(168,85,247,0.08)',
-    label: 'Admin',
+    color: "#a855f7",
+    light: "rgba(168,85,247,0.12)",
+    border: "rgba(168,85,247,0.3)",
+    glow: "rgba(168,85,247,0.08)",
+    label: "Admin",
   },
   vendor: {
-    color: '#f97316',
-    light: 'rgba(249,115,22,0.12)',
-    border: 'rgba(249,115,22,0.3)',
-    glow: 'rgba(249,115,22,0.08)',
-    label: 'Vendor',
+    color: "#f97316",
+    light: "rgba(249,115,22,0.12)",
+    border: "rgba(249,115,22,0.3)",
+    glow: "rgba(249,115,22,0.08)",
+    label: "Vendor",
   },
   user: {
-    color: '#3b82f6',
-    light: 'rgba(59,130,246,0.12)',
-    border: 'rgba(59,130,246,0.3)',
-    glow: 'rgba(59,130,246,0.08)',
-    label: 'User',
+    color: "#3b82f6",
+    light: "rgba(59,130,246,0.12)",
+    border: "rgba(59,130,246,0.3)",
+    glow: "rgba(59,130,246,0.08)",
+    label: "User",
   },
 };
-const getAccent = role => roleAccent[role?.toLowerCase()] || roleAccent.user;
+const getAccent = (role) => roleAccent[role?.toLowerCase()] || roleAccent.user;
 
 const DashboardLayout = () => {
   const { user, loading, role } = useContext(AuthContext);
@@ -40,27 +40,27 @@ const DashboardLayout = () => {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ background: 'transparent' }}
+        style={{ background: "transparent" }}
       >
         <div className="flex flex-col items-center gap-4">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center"
             style={{
-              background: 'rgba(249,115,22,0.12)',
-              border: '0.5px solid rgba(249,115,22,0.3)',
+              background: "rgba(249,115,22,0.12)",
+              border: "0.5px solid rgba(249,115,22,0.3)",
             }}
           >
-            <FaBus size={22} style={{ color: '#f97316' }} />
+            <FaBus size={22} style={{ color: "#f97316" }} />
           </div>
           <div className="flex gap-1.5">
-            {[0, 1, 2].map(i => (
+            {[0, 1, 2].map((i) => (
               <span
                 key={i}
                 className="w-1.5 h-1.5 rounded-full"
                 style={{
-                  background: '#f97316',
+                  background: "#f97316",
                   animation: `pulse-dot 1.2s ${i * 0.2}s infinite`,
-                  display: 'inline-block',
+                  display: "inline-block",
                 }}
               />
             ))}
@@ -83,15 +83,15 @@ const DashboardLayout = () => {
         <div
           className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{
-            background: 'rgba(249,115,22,0.15)',
-            border: '0.5px solid rgba(249,115,22,0.3)',
+            background: "rgba(249,115,22,0.15)",
+            border: "0.5px solid rgba(249,115,22,0.3)",
           }}
         >
-          <FaBus size={15} style={{ color: '#f97316' }} />
+          <FaBus size={15} style={{ color: "#f97316" }} />
         </div>
         <span
           className="text-xl font-extrabold tracking-tight"
-          style={{ color: '#f8fafc', letterSpacing: '-0.03em' }}
+          style={{ color: "#f8fafc", letterSpacing: "-0.03em" }}
         >
           VOYAGO
         </span>
@@ -123,16 +123,16 @@ const DashboardLayout = () => {
         <div className="flex-1 min-w-0">
           <p
             className="text-xs font-semibold truncate"
-            style={{ color: '#e2e8f0' }}
+            style={{ color: "#e2e8f0" }}
           >
-            {user?.displayName || user?.email?.split('@')[0]}
+            {user?.displayName || user?.email?.split("@")[0]}
           </p>
           <span
             className="text-[10px] font-bold px-1.5 py-0.5 rounded-md"
             style={{
               background: accent.color,
-              color: '#fff',
-              letterSpacing: '0.03em',
+              color: "#fff",
+              letterSpacing: "0.03em",
             }}
           >
             {accent.label}
@@ -140,7 +140,7 @@ const DashboardLayout = () => {
         </div>
         <span
           className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-          style={{ background: '#4ade80', boxShadow: '0 0 5px #4ade80' }}
+          style={{ background: "#4ade80", boxShadow: "0 0 5px #4ade80" }}
         />
       </div>
 
@@ -151,21 +151,21 @@ const DashboardLayout = () => {
             <div
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200"
               style={{
-                background: isActive ? 'rgba(249,115,22,0.12)' : 'transparent',
+                background: isActive ? "rgba(249,115,22,0.12)" : "transparent",
                 border: isActive
-                  ? '0.5px solid rgba(249,115,22,0.3)'
-                  : '0.5px solid transparent',
+                  ? "0.5px solid rgba(249,115,22,0.3)"
+                  : "0.5px solid transparent",
               }}
-              onMouseEnter={e => {
+              onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                  e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
                 }
               }}
-              onMouseLeave={e => {
+              onMouseLeave={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = 'transparent';
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.borderColor = "transparent";
                 }
               }}
             >
@@ -173,21 +173,21 @@ const DashboardLayout = () => {
                 className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                 style={{
                   background: isActive
-                    ? 'rgba(249,115,22,0.2)'
-                    : 'rgba(255,255,255,0.04)',
+                    ? "rgba(249,115,22,0.2)"
+                    : "rgba(255,255,255,0.04)",
                   border: isActive
-                    ? '0.5px solid rgba(249,115,22,0.3)'
-                    : '0.5px solid rgba(255,255,255,0.08)',
+                    ? "0.5px solid rgba(249,115,22,0.3)"
+                    : "0.5px solid rgba(255,255,255,0.08)",
                 }}
               >
                 <FaHome
                   size={12}
-                  style={{ color: isActive ? '#fb923c' : '#475569' }}
+                  style={{ color: isActive ? "#fb923c" : "#475569" }}
                 />
               </div>
               <span
                 className="text-xs font-semibold"
-                style={{ color: isActive ? '#fb923c' : '#94a3b8' }}
+                style={{ color: isActive ? "#fb923c" : "#94a3b8" }}
               >
                 Home
               </span>
@@ -199,8 +199,8 @@ const DashboardLayout = () => {
       {/* Divider */}
       <div
         style={{
-          height: '0.5px',
-          background: 'rgba(255,255,255,0.06)',
+          height: "0.5px",
+          background: "rgba(255,255,255,0.06)",
           marginBottom: 16,
         }}
       />
@@ -208,11 +208,11 @@ const DashboardLayout = () => {
       {/* Role menu */}
       <div
         className="flex-1 overflow-y-auto"
-        style={{ scrollbarWidth: 'none' }}
+        style={{ scrollbarWidth: "none" }}
       >
-        {role === 'admin' ? (
+        {role === "admin" ? (
           <ManuAdmin />
-        ) : role === 'vendor' ? (
+        ) : role === "vendor" ? (
           <ManuVendor />
         ) : (
           <ManuUser />
@@ -222,13 +222,13 @@ const DashboardLayout = () => {
       {/* Bottom strip */}
       <div
         className="mt-6 pt-4 flex items-center gap-2"
-        style={{ borderTop: '0.5px solid rgba(255,255,255,0.06)' }}
+        style={{ borderTop: "0.5px solid rgba(255,255,255,0.06)" }}
       >
         <span
           className="w-1.5 h-1.5 rounded-full"
-          style={{ background: '#4ade80', boxShadow: '0 0 5px #4ade80' }}
+          style={{ background: "#4ade80", boxShadow: "0 0 5px #4ade80" }}
         />
-        <span className="text-[11px]" style={{ color: '#334155' }}>
+        <span className="text-[11px]" style={{ color: "#334155" }}>
           Active session
         </span>
       </div>
@@ -253,8 +253,8 @@ const DashboardLayout = () => {
         className="fixed inset-0 pointer-events-none z-0"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
+            "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
         }}
       />
 
@@ -262,13 +262,13 @@ const DashboardLayout = () => {
       <div
         className="fixed pointer-events-none z-0"
         style={{
-          bottom: '-20%',
-          right: '-10%',
-          width: '50vw',
-          height: '50vw',
-          borderRadius: '50%',
+          bottom: "-20%",
+          right: "-10%",
+          width: "50vw",
+          height: "50vw",
+          borderRadius: "50%",
           background: `radial-gradient(circle, ${accent.color}0a 0%, transparent 70%)`,
-          filter: 'blur(40px)',
+          filter: "blur(40px)",
         }}
       />
 
@@ -278,14 +278,14 @@ const DashboardLayout = () => {
         style={{
           width: 260,
 
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRight: '0.5px solid rgba(255,255,255,0.07)',
-          padding: '28px 20px',
-          position: 'sticky',
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          borderRight: "0.5px solid rgba(255,255,255,0.07)",
+          padding: "28px 20px",
+          position: "sticky",
           top: 0,
-          height: '100vh',
-          overflowY: 'auto',
+          height: "100vh",
+          overflowY: "auto",
         }}
       >
         <Sidebar />
@@ -295,7 +295,7 @@ const DashboardLayout = () => {
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 lg:hidden"
-          style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+          style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -303,25 +303,25 @@ const DashboardLayout = () => {
         className="fixed top-0 left-0 h-full z-50 lg:hidden flex flex-col transition-transform duration-300"
         style={{
           width: 260,
-          background: 'rgba(8,14,28,0.95)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRight: '0.5px solid rgba(255,255,255,0.07)',
-          padding: '28px 20px',
-          transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-          overflowY: 'auto',
+          background: "rgba(8,14,28,0.95)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          borderRight: "0.5px solid rgba(255,255,255,0.07)",
+          padding: "28px 20px",
+          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+          overflowY: "auto",
         }}
       >
         <button
           onClick={() => setSidebarOpen(false)}
           className="absolute top-4 right-4 w-8 h-8 rounded-xl flex items-center justify-center"
           style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '0.5px solid rgba(255,255,255,0.08)',
-            color: '#475569',
+            background: "rgba(255,255,255,0.04)",
+            border: "0.5px solid rgba(255,255,255,0.08)",
+            color: "#475569",
           }}
-          onMouseEnter={e => (e.currentTarget.style.color = '#f8fafc')}
-          onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#f8fafc")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#475569")}
         >
           <FaTimes size={12} />
         </button>
@@ -334,19 +334,19 @@ const DashboardLayout = () => {
         <div
           className="lg:hidden flex items-center gap-3 px-4 py-3 sticky top-0 z-30"
           style={{
-            background: 'rgba(8,14,28,0.85)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            borderBottom: '0.5px solid rgba(255,255,255,0.07)',
+            background: "rgba(8,14,28,0.85)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            borderBottom: "0.5px solid rgba(255,255,255,0.07)",
           }}
         >
           <button
             onClick={() => setSidebarOpen(true)}
             className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '0.5px solid rgba(255,255,255,0.08)',
-              color: '#94a3b8',
+              background: "rgba(255,255,255,0.04)",
+              border: "0.5px solid rgba(255,255,255,0.08)",
+              color: "#94a3b8",
             }}
           >
             <FaBars size={14} />
@@ -354,13 +354,13 @@ const DashboardLayout = () => {
           <div className="flex items-center gap-2 flex-1">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ background: 'rgba(249,115,22,0.15)' }}
+              style={{ background: "rgba(249,115,22,0.15)" }}
             >
-              <FaBus size={12} style={{ color: '#f97316' }} />
+              <FaBus size={12} style={{ color: "#f97316" }} />
             </div>
             <span
               className="text-sm font-bold"
-              style={{ color: '#f8fafc', letterSpacing: '-0.02em' }}
+              style={{ color: "#f8fafc", letterSpacing: "-0.02em" }}
             >
               VOYAGO
             </span>

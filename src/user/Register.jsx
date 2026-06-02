@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
-import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 import {
   FiUser,
   FiMail,
@@ -10,11 +10,11 @@ import {
   FiEyeOff,
   FiUploadCloud,
   FiArrowRight,
-} from 'react-icons/fi';
-import { FcGoogle } from 'react-icons/fc';
-import { HiSparkles, HiTicket } from 'react-icons/hi2';
-import registerImg from '../assets/register (7).png';
-import { AuthContext } from '../Context/AuthContext';
+} from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
+import { HiSparkles, HiTicket } from "react-icons/hi2";
+import registerImg from "../assets/register (7).png";
+import { AuthContext } from "../Context/AutContext";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -22,18 +22,18 @@ const Register = () => {
     useContext(AuthContext);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [fileName, setFileName] = useState('');
+  const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
   // ------------------- Image Upload -------------------
-  const handleImageUpload = async file => {
+  const handleImageUpload = async (file) => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append("image", file);
 
     const res = await fetch(
       `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key}`,
-      { method: 'POST', body: formData },
+      { method: "POST", body: formData },
     );
 
     const data = await res.json();
@@ -54,20 +54,20 @@ const Register = () => {
         { email, name, photoURL },
       );
 
-      localStorage.setItem('token', res.data.token);
-      toast.success('Google Login Successful!');
-      navigate('/');
+      localStorage.setItem("token", res.data.token);
+      toast.success("Google Login Successful!");
+      navigate("/");
       window.location.reload();
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message || 'Google Login Failed');
+      toast.error(err.response?.data?.message || "Google Login Failed");
     } finally {
       setGoogleLoading(false);
     }
   };
 
   // ------------------- Email Register -------------------
-  const handleRegister = async e => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     const name = e.target.name.value;
@@ -76,11 +76,11 @@ const Register = () => {
     const photoFile = e.target.photo.files[0];
 
     if (!photoFile) {
-      return toast.error('Please select a profile photo');
+      return toast.error("Please select a profile photo");
     }
 
     setLoading(true);
-    const toastId = toast.loading('Creating your account...');
+    const toastId = toast.loading("Creating your account...");
 
     try {
       const photoURL = await handleImageUpload(photoFile);
@@ -91,13 +91,13 @@ const Register = () => {
         name,
         email,
         password,
-        role: 'user',
+        role: "user",
         photoURL,
       });
 
-      localStorage.setItem('token', '');
-      toast.success('Registered successfully!', { id: toastId });
-      navigate('/');
+      localStorage.setItem("token", "");
+      toast.success("Registered successfully!", { id: toastId });
+      navigate("/");
       window.location.reload();
     } catch (err) {
       console.error(err);
@@ -114,15 +114,15 @@ const Register = () => {
         containerStyle={{ top: 60 }}
         toastOptions={{
           style: {
-            background: '#0f172a',
-            color: '#f1f5f9',
-            border: '1px solid rgba(99,102,241,0.3)',
-            borderRadius: '12px',
-            fontSize: '14px',
+            background: "#0f172a",
+            color: "#f1f5f9",
+            border: "1px solid rgba(99,102,241,0.3)",
+            borderRadius: "12px",
+            fontSize: "14px",
             fontFamily: "'Plus Jakarta Sans', sans-serif",
           },
-          success: { iconTheme: { primary: '#6366f1', secondary: '#fff' } },
-          error: { iconTheme: { primary: '#f43f5e', secondary: '#fff' } },
+          success: { iconTheme: { primary: "#6366f1", secondary: "#fff" } },
+          error: { iconTheme: { primary: "#f43f5e", secondary: "#fff" } },
         }}
       />
 
@@ -530,7 +530,7 @@ const Register = () => {
           <div className="orb orb-2" />
           <img src={registerImg} alt="register" className="reg-img" />
           <div className="left-badge">
-            <HiTicket style={{ color: '#818cf8', fontSize: 16 }} />
+            <HiTicket style={{ color: "#818cf8", fontSize: 16 }} />
             <span>Join thousands of users today</span>
           </div>
         </div>
@@ -599,11 +599,11 @@ const Register = () => {
                 {/* Photo upload */}
                 <div>
                   <label
-                    className={`file-label${fileName ? ' has-file' : ''}`}
+                    className={`file-label${fileName ? " has-file" : ""}`}
                     htmlFor="photo-upload"
                   >
                     <FiUploadCloud size={18} />
-                    <span>{fileName || 'Upload profile photo'}</span>
+                    <span>{fileName || "Upload profile photo"}</span>
                   </label>
                   <input
                     id="photo-upload"
@@ -612,7 +612,7 @@ const Register = () => {
                     accept="image/*"
                     required
                     className="file-input-hidden"
-                    onChange={e => setFileName(e.target.files[0]?.name || '')}
+                    onChange={(e) => setFileName(e.target.files[0]?.name || "")}
                   />
                 </div>
 
@@ -620,18 +620,18 @@ const Register = () => {
                 <div className="field-wrap">
                   <FiLock className="field-icon" />
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Password (min 6 chars)"
                     required
                     minLength={6}
                     className="field-input"
-                    style={{ paddingRight: '44px' }}
+                    style={{ paddingRight: "44px" }}
                   />
                   <button
                     type="button"
                     className="eye-toggle"
-                    onClick={() => setShowPassword(p => !p)}
+                    onClick={() => setShowPassword((p) => !p)}
                     tabIndex={-1}
                   >
                     {showPassword ? <FiEyeOff /> : <FiEye />}

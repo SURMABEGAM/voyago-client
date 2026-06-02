@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import Swal from 'sweetalert2';
-import UseAxiosSecure from '../hooks/UseAxiosSecure';
-import { AuthContext } from '../Context/AuthContext';
+import React, { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router";
+import Swal from "sweetalert2";
+import UseAxiosSecure from "../hooks/UseAxiosSecure";
+import { AuthContext } from "../Context/AutContext";
 import {
   FaBus,
   FaMapMarkerAlt,
@@ -13,94 +13,94 @@ import {
   FaCheckCircle,
   FaCalendarAlt,
   FaArrowLeft,
-} from 'react-icons/fa';
+} from "react-icons/fa";
 import {
   MdWifi,
   MdOutlineConfirmationNumber,
   MdAcUnit,
   MdLocalDining,
   MdChargingStation,
-} from 'react-icons/md';
-import { FiArrowRight, FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
+} from "react-icons/md";
+import { FiArrowRight, FiArrowLeft, FiAlertCircle } from "react-icons/fi";
 
 // ─── City color map ───────────────────────────────────────────────
 const cityColors = {
   dhaka: {
-    color: '#f97316',
-    light: 'rgba(249,115,22,0.12)',
-    border: 'rgba(249,115,22,0.3)',
+    color: "#f97316",
+    light: "rgba(249,115,22,0.12)",
+    border: "rgba(249,115,22,0.3)",
   },
   chittagong: {
-    color: '#3b82f6',
-    light: 'rgba(59,130,246,0.12)',
-    border: 'rgba(59,130,246,0.3)',
+    color: "#3b82f6",
+    light: "rgba(59,130,246,0.12)",
+    border: "rgba(59,130,246,0.3)",
   },
   sylhet: {
-    color: '#10b981',
-    light: 'rgba(16,185,129,0.12)',
-    border: 'rgba(16,185,129,0.3)',
+    color: "#10b981",
+    light: "rgba(16,185,129,0.12)",
+    border: "rgba(16,185,129,0.3)",
   },
   rajshahi: {
-    color: '#a855f7',
-    light: 'rgba(168,85,247,0.12)',
-    border: 'rgba(168,85,247,0.3)',
+    color: "#a855f7",
+    light: "rgba(168,85,247,0.12)",
+    border: "rgba(168,85,247,0.3)",
   },
   khulna: {
-    color: '#f59e0b',
-    light: 'rgba(245,158,11,0.12)',
-    border: 'rgba(245,158,11,0.3)',
+    color: "#f59e0b",
+    light: "rgba(245,158,11,0.12)",
+    border: "rgba(245,158,11,0.3)",
   },
   rangpur: {
-    color: '#ec4899',
-    light: 'rgba(236,72,153,0.12)',
-    border: 'rgba(236,72,153,0.3)',
+    color: "#ec4899",
+    light: "rgba(236,72,153,0.12)",
+    border: "rgba(236,72,153,0.3)",
   },
 };
-const getTheme = city =>
+const getTheme = (city) =>
   cityColors[city?.toLowerCase()] || {
-    color: '#06b6d4',
-    light: 'rgba(6,182,212,0.12)',
-    border: 'rgba(6,182,212,0.3)',
+    color: "#06b6d4",
+    light: "rgba(6,182,212,0.12)",
+    border: "rgba(6,182,212,0.3)",
   };
 
 // ─── Helpers ──────────────────────────────────────────────────────
-const formatDate = d => {
-  if (!d) return '—';
-  return new Date(d).toLocaleDateString('en-GB', {
-    weekday: 'long',
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
+const formatDate = (d) => {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
   });
 };
-const formatTime12h = t => {
-  if (!t) return '—';
-  const [h, m] = t.split(':').map(Number);
-  const ampm = h >= 12 ? 'PM' : 'AM';
+const formatTime12h = (t) => {
+  if (!t) return "—";
+  const [h, m] = t.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
   const hour = h % 12 || 12;
-  return `${hour}:${String(m).padStart(2, '0')} ${ampm}`;
+  return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
 };
 
-const formatDateShort = d => {
-  if (!d) return '—';
-  return new Date(d).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
+const formatDateShort = (d) => {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
   });
 };
-const isBookable = departureDate => {
+const isBookable = (departureDate) => {
   if (!departureDate) return false;
   const diff = (new Date(departureDate) - new Date()) / (1000 * 60 * 60 * 24);
   return diff >= 0 && diff <= 15;
 };
-const getDaysUntil = departureDate => {
+const getDaysUntil = (departureDate) => {
   if (!departureDate) return null;
   return Math.ceil(
     (new Date(departureDate) - new Date()) / (1000 * 60 * 60 * 24),
   );
 };
-const perkIcon = perk => {
+const perkIcon = (perk) => {
   const p = perk.toLowerCase();
   if (/wifi|wi-fi/.test(p)) return <MdWifi size={13} />;
   if (/ac|air/.test(p)) return <MdAcUnit size={13} />;
@@ -112,16 +112,16 @@ const perkIcon = perk => {
 // ─── Skeleton ─────────────────────────────────────────────────────
 const Skeleton = () => (
   <div className="animate-pulse space-y-6">
-    <div style={{ height: 320, background: '#1e293b', borderRadius: 24 }} />
+    <div style={{ height: 320, background: "#1e293b", borderRadius: 24 }} />
     <div className="grid grid-cols-3 gap-4">
-      {[1, 2, 3].map(i => (
+      {[1, 2, 3].map((i) => (
         <div
           key={i}
-          style={{ height: 80, background: '#1e293b', borderRadius: 16 }}
+          style={{ height: 80, background: "#1e293b", borderRadius: 16 }}
         />
       ))}
     </div>
-    <div style={{ height: 200, background: '#1e293b', borderRadius: 16 }} />
+    <div style={{ height: 200, background: "#1e293b", borderRadius: 16 }} />
   </div>
 );
 
@@ -129,28 +129,28 @@ const Skeleton = () => (
 const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
   const [form, setForm] = useState({
     quantity: 1,
-    customerName: user?.displayName || user?.name || '',
-    mobile: '',
-    boardingPoint: '',
-    dropPoint: '',
+    customerName: user?.displayName || user?.name || "",
+    mobile: "",
+    boardingPoint: "",
+    dropPoint: "",
   });
   const [errors, setErrors] = useState({});
 
   const set = (key, val) => {
-    setForm(f => ({ ...f, [key]: val }));
-    setErrors(e => ({ ...e, [key]: '' }));
+    setForm((f) => ({ ...f, [key]: val }));
+    setErrors((e) => ({ ...e, [key]: "" }));
   };
 
   const validate = () => {
     const e = {};
-    if (!form.customerName.trim()) e.customerName = 'Name is required';
-    if (!form.mobile.trim()) e.mobile = 'Mobile number is required';
+    if (!form.customerName.trim()) e.customerName = "Name is required";
+    if (!form.mobile.trim()) e.mobile = "Mobile number is required";
     else if (!/^[0-9+\-\s]{7,15}$/.test(form.mobile.trim()))
-      e.mobile = 'Enter a valid mobile number';
+      e.mobile = "Enter a valid mobile number";
     if (!form.boardingPoint.trim())
-      e.boardingPoint = 'Boarding point is required';
-    if (!form.dropPoint.trim()) e.dropPoint = 'Drop point is required';
-    if (form.quantity < 1) e.quantity = 'At least 1 seat required';
+      e.boardingPoint = "Boarding point is required";
+    if (!form.dropPoint.trim()) e.dropPoint = "Drop point is required";
+    if (form.quantity < 1) e.quantity = "At least 1 seat required";
     if (form.quantity > ticket.quantity)
       e.quantity = `Only ${ticket.quantity} seats available`;
     return e;
@@ -168,13 +168,13 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(2,8,23,0.85)', backdropFilter: 'blur(8px)' }}
-      onClick={e => e.target === e.currentTarget && onClose()}
+      style={{ background: "rgba(2,8,23,0.85)", backdropFilter: "blur(8px)" }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
         className="w-full max-w-md rounded-3xl overflow-hidden"
         style={{
-          background: '#0f172a',
+          background: "#0f172a",
           border: `1px solid ${theme.border}`,
           boxShadow: `0 0 60px ${theme.color}18`,
         }}
@@ -182,22 +182,22 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
         {/* Header */}
         <div
           className="px-6 py-4 flex items-center justify-between border-b"
-          style={{ borderColor: '#1e293b' }}
+          style={{ borderColor: "#1e293b" }}
         >
           <div>
-            <h2 className="text-base font-bold" style={{ color: '#f8fafc' }}>
+            <h2 className="text-base font-bold" style={{ color: "#f8fafc" }}>
               Book Your Seat
             </h2>
-            <p className="text-xs mt-0.5" style={{ color: '#64748b' }}>
+            <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>
               {ticket.from} → {ticket.to}
             </p>
           </div>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-xl flex items-center justify-center text-lg font-bold transition"
-            style={{ background: '#1e293b', color: '#64748b' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#f87171')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}
+            style={{ background: "#1e293b", color: "#64748b" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#f87171")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
           >
             ×
           </button>
@@ -215,7 +215,7 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
             <input
               type="text"
               value={form.customerName}
-              onChange={e => set('customerName', e.target.value)}
+              onChange={(e) => set("customerName", e.target.value)}
               placeholder="Full name"
               style={inputStyle(errors.customerName, theme)}
             />
@@ -231,7 +231,7 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
             <input
               type="tel"
               value={form.mobile}
-              onChange={e => set('mobile', e.target.value)}
+              onChange={(e) => set("mobile", e.target.value)}
               placeholder="+880 1XXX-XXXXXX"
               style={inputStyle(errors.mobile, theme)}
             />
@@ -248,7 +248,7 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
             <input
               type="text"
               value={form.boardingPoint}
-              onChange={e => set('boardingPoint', e.target.value)}
+              onChange={(e) => set("boardingPoint", e.target.value)}
               placeholder={`e.g. ${ticket.from} Bus Stand`}
               style={inputStyle(errors.boardingPoint, theme)}
             />
@@ -265,7 +265,7 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
             <input
               type="text"
               value={form.dropPoint}
-              onChange={e => set('dropPoint', e.target.value)}
+              onChange={(e) => set("dropPoint", e.target.value)}
               placeholder={`e.g. ${ticket.to} Terminal`}
               style={inputStyle(errors.dropPoint, theme)}
             />
@@ -274,18 +274,18 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
           {/* Quantity */}
           <Field
             label="Number of Seats"
-            hint={`Max ${ticket.quantity} seat${ticket.quantity !== 1 ? 's' : ''} available`}
+            hint={`Max ${ticket.quantity} seat${ticket.quantity !== 1 ? "s" : ""} available`}
             error={errors.quantity}
             theme={theme}
           >
             <div className="flex items-center gap-3">
               <button
-                onClick={() => set('quantity', Math.max(1, form.quantity - 1))}
+                onClick={() => set("quantity", Math.max(1, form.quantity - 1))}
                 className="w-9 h-9 rounded-xl text-lg font-bold flex items-center justify-center transition"
                 style={{
-                  background: '#1e293b',
-                  color: form.quantity <= 1 ? '#334155' : '#94a3b8',
-                  border: '0.5px solid #334155',
+                  background: "#1e293b",
+                  color: form.quantity <= 1 ? "#334155" : "#94a3b8",
+                  border: "0.5px solid #334155",
                 }}
                 disabled={form.quantity <= 1}
               >
@@ -299,21 +299,21 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
               </span>
               <button
                 onClick={() =>
-                  set('quantity', Math.min(ticket.quantity, form.quantity + 1))
+                  set("quantity", Math.min(ticket.quantity, form.quantity + 1))
                 }
                 className="w-9 h-9 rounded-xl text-lg font-bold flex items-center justify-center transition"
                 style={{
-                  background: '#1e293b',
+                  background: "#1e293b",
                   color:
-                    form.quantity >= ticket.quantity ? '#334155' : '#94a3b8',
-                  border: '0.5px solid #334155',
+                    form.quantity >= ticket.quantity ? "#334155" : "#94a3b8",
+                  border: "0.5px solid #334155",
                 }}
                 disabled={form.quantity >= ticket.quantity}
               >
                 +
               </button>
-              <span className="text-sm ml-1" style={{ color: '#475569' }}>
-                × ৳{ticket.price} ={' '}
+              <span className="text-sm ml-1" style={{ color: "#475569" }}>
+                × ৳{ticket.price} ={" "}
                 <span style={{ color: theme.color, fontWeight: 700 }}>
                   ৳{(ticket.price * form.quantity).toLocaleString()}
                 </span>
@@ -325,15 +325,15 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
         {/* Footer */}
         <div
           className="px-6 py-4 border-t flex gap-3"
-          style={{ borderColor: '#1e293b' }}
+          style={{ borderColor: "#1e293b" }}
         >
           <button
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition"
             style={{
-              background: '#1e293b',
-              color: '#64748b',
-              border: '0.5px solid #334155',
+              background: "#1e293b",
+              color: "#64748b",
+              border: "0.5px solid #334155",
             }}
           >
             Cancel
@@ -348,7 +348,7 @@ const BookingModal = ({ ticket, user, theme, onClose, onConfirm, loading }) => {
               <>
                 <span
                   className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                  style={{ animation: 'spin 0.6s linear infinite' }}
+                  style={{ animation: "spin 0.6s linear infinite" }}
                 />
                 Processing…
               </>
@@ -370,7 +370,7 @@ const Field = ({ label, hint, required, error, theme, children }) => (
   <div>
     <label
       className="block text-xs font-semibold mb-1.5"
-      style={{ color: '#94a3b8' }}
+      style={{ color: "#94a3b8" }}
     >
       {label}
       {required && (
@@ -380,7 +380,7 @@ const Field = ({ label, hint, required, error, theme, children }) => (
       )}
     </label>
     {hint && (
-      <p className="text-[10px] mb-1" style={{ color: '#475569' }}>
+      <p className="text-[10px] mb-1" style={{ color: "#475569" }}>
         {hint}
       </p>
     )}
@@ -388,7 +388,7 @@ const Field = ({ label, hint, required, error, theme, children }) => (
     {error && (
       <p
         className="text-[10px] mt-1 flex items-center gap-1"
-        style={{ color: '#f87171' }}
+        style={{ color: "#f87171" }}
       >
         <FiAlertCircle size={9} /> {error}
       </p>
@@ -397,15 +397,15 @@ const Field = ({ label, hint, required, error, theme, children }) => (
 );
 
 const inputStyle = (error, theme) => ({
-  width: '100%',
-  background: '#0a1120',
-  border: `0.5px solid ${error ? 'rgba(239,68,68,0.5)' : '#1e293b'}`,
+  width: "100%",
+  background: "#0a1120",
+  border: `0.5px solid ${error ? "rgba(239,68,68,0.5)" : "#1e293b"}`,
   borderRadius: 10,
-  padding: '10px 12px',
-  color: '#e2e8f0',
+  padding: "10px 12px",
+  color: "#e2e8f0",
   fontSize: 13,
-  outline: 'none',
-  transition: 'border-color 0.15s',
+  outline: "none",
+  transition: "border-color 0.15s",
 });
 
 // ─── Main ─────────────────────────────────────────────────────────
@@ -428,11 +428,11 @@ const TicketDetails = () => {
     setLoading(true);
     axiosSecure
       .get(`/api/tickets/${ticketId}`)
-      .then(res => setTicket(res.data))
-      .catch(err => {
+      .then((res) => setTicket(res.data))
+      .catch((err) => {
         if (err.response?.status === 404)
-          setError('Ticket not found or unavailable.');
-        else setError('Failed to load ticket. Please try again.');
+          setError("Ticket not found or unavailable.");
+        else setError("Failed to load ticket. Please try again.");
       })
       .finally(() => setLoading(false));
   }, [ticketId, axiosSecure]);
@@ -441,14 +441,14 @@ const TicketDetails = () => {
   const handleBook = () => {
     if (!user?.email) {
       return Swal.fire({
-        title: 'Login Required',
-        text: 'Please login to book this ticket.',
-        icon: 'warning',
-        background: '#0f172a',
-        color: '#f8fafc',
+        title: "Login Required",
+        text: "Please login to book this ticket.",
+        icon: "warning",
+        background: "#0f172a",
+        color: "#f8fafc",
         confirmButtonColor: theme.color,
-        confirmButtonText: 'Go to Login',
-      }).then(r => r.isConfirmed && navigate('/login'));
+        confirmButtonText: "Go to Login",
+      }).then((r) => r.isConfirmed && navigate("/login"));
     }
     setShowModal(true);
   };
@@ -463,7 +463,7 @@ const TicketDetails = () => {
   }) => {
     setBooking(true);
     try {
-      await axiosSecure.post('/api/booking', {
+      await axiosSecure.post("/api/booking", {
         ticketId: ticket._id,
         title: ticket.title,
         from: ticket.from,
@@ -479,31 +479,31 @@ const TicketDetails = () => {
         dropPoint,
         departureDate: ticket.departureDate,
         departureTime: ticket.departureTime,
-        status: 'Pending',
+        status: "Pending",
       });
 
       setShowModal(false);
 
       await Swal.fire({
-        title: 'Booking Requested! 🎉',
-        text: 'Your booking is pending vendor approval. Check My Booked Tickets for updates.',
-        icon: 'success',
-        background: '#0f172a',
-        color: '#f8fafc',
+        title: "Booking Requested! 🎉",
+        text: "Your booking is pending vendor approval. Check My Booked Tickets for updates.",
+        icon: "success",
+        background: "#0f172a",
+        color: "#f8fafc",
         confirmButtonColor: theme.color,
-        confirmButtonText: 'View My Bookings',
+        confirmButtonText: "View My Bookings",
       });
 
-      navigate('/dashboard/my-bookings');
+      navigate("/dashboard/my-bookings");
     } catch (err) {
       Swal.fire({
-        title: 'Booking Failed',
+        title: "Booking Failed",
         text:
           err?.response?.data?.message ||
-          'Could not place booking. Please try again.',
-        icon: 'error',
-        background: '#0f172a',
-        color: '#f8fafc',
+          "Could not place booking. Please try again.",
+        icon: "error",
+        background: "#0f172a",
+        color: "#f8fafc",
         confirmButtonColor: theme.color,
       });
     } finally {
@@ -518,7 +518,7 @@ const TicketDetails = () => {
   const canBook = !soldOut && bookable;
   const cityLabel = cityName
     ? cityName.charAt(0).toUpperCase() + cityName.slice(1)
-    : '';
+    : "";
 
   return (
     <div className="min-h-screen" style={{ fontFamily: "'Sora', sans-serif" }}>
@@ -559,13 +559,13 @@ const TicketDetails = () => {
         <button
           onClick={() => navigate(-1)}
           className="fade-up flex items-center gap-2 mb-6 text-sm font-medium transition-all duration-200"
-          style={{ color: '#64748b' }}
-          onMouseEnter={e => (e.currentTarget.style.color = theme.color)}
-          onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}
+          style={{ color: "#64748b" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = theme.color)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
         >
           <span
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: '#0f172a', border: '0.5px solid #1e293b' }}
+            style={{ background: "#0f172a", border: "0.5px solid #1e293b" }}
           >
             <FiArrowLeft size={14} />
           </span>
@@ -579,13 +579,13 @@ const TicketDetails = () => {
             <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5"
               style={{
-                background: 'rgba(239,68,68,0.08)',
-                border: '0.5px solid rgba(239,68,68,0.2)',
+                background: "rgba(239,68,68,0.08)",
+                border: "0.5px solid rgba(239,68,68,0.2)",
               }}
             >
-              <FiAlertCircle size={36} style={{ color: '#f87171' }} />
+              <FiAlertCircle size={36} style={{ color: "#f87171" }} />
             </div>
-            <p className="text-xl font-bold mb-2" style={{ color: '#f87171' }}>
+            <p className="text-xl font-bold mb-2" style={{ color: "#f87171" }}>
               {error}
             </p>
             <button
@@ -616,16 +616,16 @@ const TicketDetails = () => {
                     alt={ticket.title}
                     className="w-full h-full object-cover transition-transform duration-700"
                     style={{
-                      transform: imgLoaded ? 'scale(1)' : 'scale(1.04)',
+                      transform: imgLoaded ? "scale(1)" : "scale(1.04)",
                     }}
                     onLoad={() => setImgLoaded(true)}
                   />
                   <div
                     style={{
-                      position: 'absolute',
+                      position: "absolute",
                       inset: 0,
                       background:
-                        'linear-gradient(to bottom, rgba(2,8,23,0.1) 0%, rgba(2,8,23,0.85) 100%)',
+                        "linear-gradient(to bottom, rgba(2,8,23,0.1) 0%, rgba(2,8,23,0.85) 100%)",
                     }}
                   />
                 </div>
@@ -640,15 +640,15 @@ const TicketDetails = () => {
                     <div
                       key={i}
                       style={{
-                        position: 'absolute',
+                        position: "absolute",
                         width: s,
                         height: s,
-                        borderRadius: '50%',
+                        borderRadius: "50%",
                         border: `0.5px solid ${theme.color}`,
                         opacity: 0.08 - i * 0.02,
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
                       }}
                     />
                   ))}
@@ -661,12 +661,12 @@ const TicketDetails = () => {
 
               <div
                 style={{
-                  position: ticket.image ? 'absolute' : 'relative',
+                  position: ticket.image ? "absolute" : "relative",
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  background: ticket.image ? 'transparent' : '#0f172a',
-                  padding: '24px 28px',
+                  background: ticket.image ? "transparent" : "#0f172a",
+                  padding: "24px 28px",
                 }}
               >
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -684,9 +684,9 @@ const TicketDetails = () => {
                     <span
                       className="px-3 py-1 rounded-full text-xs font-semibold"
                       style={{
-                        background: 'rgba(239,68,68,0.15)',
-                        color: '#f87171',
-                        border: '0.5px solid rgba(239,68,68,0.3)',
+                        background: "rgba(239,68,68,0.15)",
+                        color: "#f87171",
+                        border: "0.5px solid rgba(239,68,68,0.3)",
                       }}
                     >
                       Sold Out
@@ -696,9 +696,9 @@ const TicketDetails = () => {
                     <span
                       className="px-3 py-1 rounded-full text-xs font-semibold"
                       style={{
-                        background: 'rgba(245,158,11,0.15)',
-                        color: '#fbbf24',
-                        border: '0.5px solid rgba(245,158,11,0.3)',
+                        background: "rgba(245,158,11,0.15)",
+                        color: "#fbbf24",
+                        border: "0.5px solid rgba(245,158,11,0.3)",
                       }}
                     >
                       Only {ticket.quantity} seats left!
@@ -711,22 +711,22 @@ const TicketDetails = () => {
                       <span
                         className="px-3 py-1 rounded-full text-xs font-semibold"
                         style={{
-                          background: 'rgba(239,68,68,0.12)',
-                          color: '#fca5a5',
-                          border: '0.5px solid rgba(239,68,68,0.25)',
+                          background: "rgba(239,68,68,0.12)",
+                          color: "#fca5a5",
+                          border: "0.5px solid rgba(239,68,68,0.25)",
                         }}
                       >
-                        Departs {daysUntil === 0 ? 'today' : `in ${daysUntil}d`}
+                        Departs {daysUntil === 0 ? "today" : `in ${daysUntil}d`}
                       </span>
                     )}
                 </div>
                 <h1
                   className="text-2xl sm:text-3xl font-extrabold leading-tight mb-1"
-                  style={{ color: '#f8fafc', letterSpacing: '-0.02em' }}
+                  style={{ color: "#f8fafc", letterSpacing: "-0.02em" }}
                 >
                   {ticket.title}
                 </h1>
-                <p className="text-sm" style={{ color: '#64748b' }}>
+                <p className="text-sm" style={{ color: "#64748b" }}>
                   {ticket.from} → {ticket.to}
                 </p>
               </div>
@@ -735,13 +735,13 @@ const TicketDetails = () => {
             {/* ── Route strip ───────────────────────────────────── */}
             <div
               className="fade-up-2 rounded-2xl p-5"
-              style={{ background: '#0f172a', border: '0.5px solid #1e293b' }}
+              style={{ background: "#0f172a", border: "0.5px solid #1e293b" }}
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
                   <p
                     className="text-[10px] uppercase tracking-widest mb-1"
-                    style={{ color: '#475569' }}
+                    style={{ color: "#475569" }}
                   >
                     From
                   </p>
@@ -768,7 +768,7 @@ const TicketDetails = () => {
                   {ticket.departureTime && (
                     <p
                       className="text-sm mt-1 font-semibold"
-                      style={{ color: '#94a3b8' }}
+                      style={{ color: "#94a3b8" }}
                     >
                       {formatTime12h(ticket.departureTime)}
                     </p>
@@ -785,7 +785,7 @@ const TicketDetails = () => {
                   >
                     <FaArrowRight size={14} style={{ color: theme.color }} />
                   </div>
-                  <p className="text-[10px]" style={{ color: '#334155' }}>
+                  <p className="text-[10px]" style={{ color: "#334155" }}>
                     Direct
                   </p>
                 </div>
@@ -793,25 +793,25 @@ const TicketDetails = () => {
                 <div className="flex-1 text-right">
                   <p
                     className="text-[10px] uppercase tracking-widest mb-1"
-                    style={{ color: '#475569' }}
+                    style={{ color: "#475569" }}
                   >
                     To
                   </p>
                   <div className="flex items-center gap-2 justify-end">
                     <p
                       className="text-xl font-extrabold"
-                      style={{ color: '#e2e8f0' }}
+                      style={{ color: "#e2e8f0" }}
                     >
                       {ticket.to}
                     </p>
                     <div
                       className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                       style={{
-                        background: '#1e293b',
-                        border: '0.5px solid #334155',
+                        background: "#1e293b",
+                        border: "0.5px solid #334155",
                       }}
                     >
-                      <FaMapMarkerAlt size={14} style={{ color: '#64748b' }} />
+                      <FaMapMarkerAlt size={14} style={{ color: "#64748b" }} />
                     </div>
                   </div>
                 </div>
@@ -825,22 +825,22 @@ const TicketDetails = () => {
                   icon: (
                     <FaCalendarAlt size={14} style={{ color: theme.color }} />
                   ),
-                  label: 'Departure Date',
+                  label: "Departure Date",
                   value: formatDateShort(ticket.departureDate),
-                  sub: formatDate(ticket.departureDate).split(',')[0],
+                  sub: formatDate(ticket.departureDate).split(",")[0],
                 },
                 {
                   icon: <FaClock size={14} style={{ color: theme.color }} />,
-                  label: 'Departure Time',
+                  label: "Departure Time",
                   value: formatTime12h(ticket.departureTime),
                   sub:
                     daysUntil !== null && daysUntil >= 0
                       ? daysUntil === 0
-                        ? 'Today'
-                        : `In ${daysUntil} day${daysUntil > 1 ? 's' : ''}`
+                        ? "Today"
+                        : `In ${daysUntil} day${daysUntil > 1 ? "s" : ""}`
                       : daysUntil !== null
-                        ? 'Past date'
-                        : '',
+                        ? "Past date"
+                        : "",
                 },
                 {
                   icon: (
@@ -848,67 +848,67 @@ const TicketDetails = () => {
                       size={14}
                       style={{
                         color: soldOut
-                          ? '#f87171'
+                          ? "#f87171"
                           : isLow
-                            ? '#fbbf24'
+                            ? "#fbbf24"
                             : theme.color,
                       }}
                     />
                   ),
-                  label: 'Seats Available',
-                  value: soldOut ? 'Sold Out' : `${ticket.quantity}`,
-                  sub: soldOut ? 'No seats' : isLow ? 'Limited!' : 'seats left',
+                  label: "Seats Available",
+                  value: soldOut ? "Sold Out" : `${ticket.quantity}`,
+                  sub: soldOut ? "No seats" : isLow ? "Limited!" : "seats left",
                   valueColor: soldOut
-                    ? '#f87171'
+                    ? "#f87171"
                     : isLow
-                      ? '#fbbf24'
-                      : '#f8fafc',
+                      ? "#fbbf24"
+                      : "#f8fafc",
                 },
                 {
                   icon: (
                     <FaShieldAlt
                       size={14}
-                      style={{ color: ticket.approved ? '#34d399' : '#64748b' }}
+                      style={{ color: ticket.approved ? "#34d399" : "#64748b" }}
                     />
                   ),
-                  label: 'Operator Status',
-                  value: ticket.approved ? 'Verified' : 'Pending',
-                  sub: ticket.approved ? 'Trusted operator' : 'Under review',
-                  valueColor: ticket.approved ? '#34d399' : '#94a3b8',
+                  label: "Operator Status",
+                  value: ticket.approved ? "Verified" : "Pending",
+                  sub: ticket.approved ? "Trusted operator" : "Under review",
+                  valueColor: ticket.approved ? "#34d399" : "#94a3b8",
                 },
               ].map((item, i) => (
                 <div
                   key={i}
                   className="rounded-2xl p-4"
                   style={{
-                    background: '#0f172a',
-                    border: '0.5px solid #1e293b',
+                    background: "#0f172a",
+                    border: "0.5px solid #1e293b",
                   }}
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div
                       className="w-7 h-7 rounded-lg flex items-center justify-center"
-                      style={{ background: '#1e293b' }}
+                      style={{ background: "#1e293b" }}
                     >
                       {item.icon}
                     </div>
                     <p
                       className="text-[10px] uppercase tracking-wider"
-                      style={{ color: '#475569' }}
+                      style={{ color: "#475569" }}
                     >
                       {item.label}
                     </p>
                   </div>
                   <p
                     className="text-base font-bold"
-                    style={{ color: item.valueColor || '#f8fafc' }}
+                    style={{ color: item.valueColor || "#f8fafc" }}
                   >
                     {item.value}
                   </p>
                   {item.sub && (
                     <p
                       className="text-[11px] mt-0.5"
-                      style={{ color: '#475569' }}
+                      style={{ color: "#475569" }}
                     >
                       {item.sub}
                     </p>
@@ -923,13 +923,13 @@ const TicketDetails = () => {
                 <div
                   className="rounded-2xl p-5"
                   style={{
-                    background: '#0f172a',
-                    border: '0.5px solid #1e293b',
+                    background: "#0f172a",
+                    border: "0.5px solid #1e293b",
                   }}
                 >
                   <p
                     className="text-xs font-semibold uppercase tracking-wider mb-4"
-                    style={{ color: '#475569' }}
+                    style={{ color: "#475569" }}
                   >
                     Included Amenities
                   </p>
@@ -946,7 +946,7 @@ const TicketDetails = () => {
                         </div>
                         <span
                           className="text-sm font-medium"
-                          style={{ color: '#cbd5e1' }}
+                          style={{ color: "#cbd5e1" }}
                         >
                           {perk}
                         </span>
@@ -957,11 +957,11 @@ const TicketDetails = () => {
               )}
               <div
                 className="rounded-2xl p-5"
-                style={{ background: '#0f172a', border: '0.5px solid #1e293b' }}
+                style={{ background: "#0f172a", border: "0.5px solid #1e293b" }}
               >
                 <p
                   className="text-xs font-semibold uppercase tracking-wider mb-4"
-                  style={{ color: '#475569' }}
+                  style={{ color: "#475569" }}
                 >
                   Trip Information
                 </p>
@@ -969,12 +969,12 @@ const TicketDetails = () => {
                   {ticket.description ? (
                     <p
                       className="text-sm leading-relaxed"
-                      style={{ color: '#94a3b8' }}
+                      style={{ color: "#94a3b8" }}
                     >
                       {ticket.description}
                     </p>
                   ) : (
-                    <p className="text-sm" style={{ color: '#334155' }}>
+                    <p className="text-sm" style={{ color: "#334155" }}>
                       No additional description provided.
                     </p>
                   )}
@@ -982,7 +982,7 @@ const TicketDetails = () => {
                     <div className="mt-3">
                       <p
                         className="text-[11px] uppercase tracking-wider mb-2"
-                        style={{ color: '#334155' }}
+                        style={{ color: "#334155" }}
                       >
                         Stops
                       </p>
@@ -992,9 +992,9 @@ const TicketDetails = () => {
                             key={i}
                             className="px-2.5 py-1 rounded-lg text-xs"
                             style={{
-                              background: '#1e293b',
-                              color: '#64748b',
-                              border: '0.5px solid #334155',
+                              background: "#1e293b",
+                              color: "#64748b",
+                              border: "0.5px solid #334155",
                             }}
                           >
                             {stop}
@@ -1011,9 +1011,9 @@ const TicketDetails = () => {
             <div
               className="fade-up-5 rounded-2xl p-6"
               style={{
-                background: '#0f172a',
-                border: `0.5px solid ${canBook ? theme.border : '#1e293b'}`,
-                boxShadow: canBook ? `0 0 40px ${theme.color}0a` : 'none',
+                background: "#0f172a",
+                border: `0.5px solid ${canBook ? theme.border : "#1e293b"}`,
+                boxShadow: canBook ? `0 0 40px ${theme.color}0a` : "none",
               }}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
@@ -1021,29 +1021,29 @@ const TicketDetails = () => {
                 <div>
                   <p
                     className="text-[11px] uppercase tracking-widest mb-1"
-                    style={{ color: '#475569' }}
+                    style={{ color: "#475569" }}
                   >
                     Ticket Price
                   </p>
                   <div className="flex items-end gap-2">
                     <span
                       className="text-5xl font-extrabold leading-none"
-                      style={{ color: theme.color, letterSpacing: '-0.03em' }}
+                      style={{ color: theme.color, letterSpacing: "-0.03em" }}
                     >
                       ৳{ticket.price}
                     </span>
-                    <span className="text-sm mb-1" style={{ color: '#475569' }}>
+                    <span className="text-sm mb-1" style={{ color: "#475569" }}>
                       / seat
                     </span>
                   </div>
                   {!soldOut && (
-                    <p className="text-xs mt-2" style={{ color: '#475569' }}>
-                      <span style={{ color: '#64748b' }}>
-                        {ticket.quantity} seat{ticket.quantity !== 1 ? 's' : ''}{' '}
+                    <p className="text-xs mt-2" style={{ color: "#475569" }}>
+                      <span style={{ color: "#64748b" }}>
+                        {ticket.quantity} seat{ticket.quantity !== 1 ? "s" : ""}{" "}
                         remaining
                       </span>
                       {isLow && (
-                        <span style={{ color: '#fbbf24' }}> · Book fast!</span>
+                        <span style={{ color: "#fbbf24" }}> · Book fast!</span>
                       )}
                     </p>
                   )}
@@ -1057,19 +1057,19 @@ const TicketDetails = () => {
                       disabled={booking}
                       className="w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-wait"
                       style={{ background: theme.color }}
-                      onMouseEnter={e => {
+                      onMouseEnter={(e) => {
                         if (!booking)
-                          e.currentTarget.style.filter = 'brightness(0.88)';
+                          e.currentTarget.style.filter = "brightness(0.88)";
                       }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.filter = 'none';
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.filter = "none";
                       }}
                     >
                       {booking ? (
                         <>
                           <span
                             className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                            style={{ animation: 'spin 0.6s linear infinite' }}
+                            style={{ animation: "spin 0.6s linear infinite" }}
                           />
                           Processing…
                         </>
@@ -1084,9 +1084,9 @@ const TicketDetails = () => {
                     <div
                       className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold"
                       style={{
-                        background: 'rgba(239,68,68,0.08)',
-                        color: '#f87171',
-                        border: '0.5px solid rgba(239,68,68,0.2)',
+                        background: "rgba(239,68,68,0.08)",
+                        color: "#f87171",
+                        border: "0.5px solid rgba(239,68,68,0.2)",
                       }}
                     >
                       Sold Out
@@ -1095,15 +1095,15 @@ const TicketDetails = () => {
                     <div
                       className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold"
                       style={{
-                        background: '#1e293b',
-                        color: '#64748b',
-                        border: '0.5px solid #334155',
+                        background: "#1e293b",
+                        color: "#64748b",
+                        border: "0.5px solid #334155",
                       }}
                     >
                       <FiAlertCircle size={14} />
                       {daysUntil !== null && daysUntil < 0
-                        ? 'Departure passed'
-                        : 'Not yet bookable'}
+                        ? "Departure passed"
+                        : "Not yet bookable"}
                     </div>
                   )}
 
@@ -1113,7 +1113,7 @@ const TicketDetails = () => {
                     daysUntil > 15 && (
                       <p
                         className="text-[11px] text-center"
-                        style={{ color: '#475569' }}
+                        style={{ color: "#475569" }}
                       >
                         Opens for booking {15 - (daysUntil - 15)} days before
                         departure
@@ -1122,7 +1122,7 @@ const TicketDetails = () => {
                   {canBook && (
                     <p
                       className="text-[11px] text-center"
-                      style={{ color: '#475569' }}
+                      style={{ color: "#475569" }}
                     >
                       Booking pending · Vendor approval required
                     </p>
@@ -1137,36 +1137,36 @@ const TicketDetails = () => {
                 onClick={() => navigate(`/tickets/${cityName}`)}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200"
                 style={{
-                  background: '#0f172a',
-                  color: '#64748b',
-                  border: '0.5px solid #1e293b',
+                  background: "#0f172a",
+                  color: "#64748b",
+                  border: "0.5px solid #1e293b",
                 }}
-                onMouseEnter={e => {
+                onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = theme.border;
                   e.currentTarget.style.color = theme.color;
                 }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#1e293b';
-                  e.currentTarget.style.color = '#64748b';
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#1e293b";
+                  e.currentTarget.style.color = "#64748b";
                 }}
               >
                 <FiArrowLeft size={13} /> All {cityLabel} tickets
               </button>
               <button
-                onClick={() => navigate('/tickets')}
+                onClick={() => navigate("/tickets")}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200"
                 style={{
-                  background: '#0f172a',
-                  color: '#64748b',
-                  border: '0.5px solid #1e293b',
+                  background: "#0f172a",
+                  color: "#64748b",
+                  border: "0.5px solid #1e293b",
                 }}
-                onMouseEnter={e => {
+                onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = theme.border;
                   e.currentTarget.style.color = theme.color;
                 }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#1e293b';
-                  e.currentTarget.style.color = '#64748b';
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#1e293b";
+                  e.currentTarget.style.color = "#64748b";
                 }}
               >
                 Browse all routes <FiArrowRight size={13} />

@@ -1,6 +1,6 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
-import AuthContext from "../Context/Authcontext";
+import AuthContext from "../Context/AutContext";
 import logo from "../assets/logo1.png";
 import {
   FiHome,

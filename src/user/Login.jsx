@@ -1,20 +1,20 @@
-import { useContext, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import loginImg from '../assets/Login.jpg';
-import { Link, useLocation, useNavigate } from 'react-router';
-import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi';
-import { FcGoogle } from 'react-icons/fc';
-import { HiTicket } from 'react-icons/hi2';
-import { AuthContext } from '../Context/AuthContext';
+import { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
+import loginImg from "../assets/Login.jpg";
+import { Link, useLocation, useNavigate } from "react-router";
+import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
+import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
+import { HiTicket } from "react-icons/hi2";
+import { AuthContext } from "../Context/AutContext";
 
 const Login = () => {
   const { googleLogin, resetPassword, setUser, setLoading, signInUser } =
     useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || '/';
+  const from = location.state?.from || "/";
 
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -27,16 +27,16 @@ const Login = () => {
   } = useForm();
 
   // ── Role based redirect ──────────────────────────────────
-  const redirectByRole = role => {
-    if (role === 'admin') return navigate('/');
-    if (role === 'vendor') return navigate('/');
-    return navigate('/');
+  const redirectByRole = (role) => {
+    if (role === "admin") return navigate("/");
+    if (role === "vendor") return navigate("/");
+    return navigate("/");
   };
 
   // ── Email/Password Login ─────────────────────────────────
-  const handleLogin = async data => {
+  const handleLogin = async (data) => {
     setLoading(true);
-    const toastId = toast.loading('Signing you in...');
+    const toastId = toast.loading("Signing you in...");
     try {
       await signInUser(data.email, data.password);
 
@@ -45,24 +45,24 @@ const Login = () => {
         data,
       );
 
-      localStorage.setItem('token', res.data.token);
+      localStorage.setItem("token", res.data.token);
       setUser({
         role: res.data.role,
         email: data.email,
         token: res.data.token,
       });
 
-      toast.success('Login Successful!', { id: toastId });
+      toast.success("Login Successful!", { id: toastId });
       redirectByRole(res.data.role);
       window.location.reload();
     } catch (err) {
-      console.error('Login error:', err);
-      let msg = 'Something went wrong!';
-      if (err.code === 'auth/invalid-credential')
-        msg = 'Invalid email or password.';
-      else if (err.code === 'auth/user-not-found')
-        msg = 'No account found with this email.';
-      else if (err.code === 'auth/wrong-password') msg = 'Incorrect password.';
+      console.error("Login error:", err);
+      let msg = "Something went wrong!";
+      if (err.code === "auth/invalid-credential")
+        msg = "Invalid email or password.";
+      else if (err.code === "auth/user-not-found")
+        msg = "No account found with this email.";
+      else if (err.code === "auth/wrong-password") msg = "Incorrect password.";
       toast.error(err.response?.data?.message || msg, { id: toastId });
     } finally {
       setLoading(false);
@@ -82,15 +82,15 @@ const Login = () => {
         { email, name },
       );
 
-      localStorage.setItem('token', res.data.token);
+      localStorage.setItem("token", res.data.token);
       setUser({ role: res.data.role, email, token: res.data.token });
 
       toast.success(`Welcome back, ${name || email}!`);
       redirectByRole(res.data.role);
       window.location.reload();
     } catch (err) {
-      console.error('Google login failed:', err);
-      toast.error('Google Login Failed. Try again.');
+      console.error("Google login failed:", err);
+      toast.error("Google Login Failed. Try again.");
     } finally {
       setGoogleLoading(false);
     }
@@ -98,14 +98,14 @@ const Login = () => {
 
   // ── Forgot Password ──────────────────────────────────────
   const handleForgot = async () => {
-    const email = watch('email');
-    if (!email) return toast.error('Enter your email first');
+    const email = watch("email");
+    if (!email) return toast.error("Enter your email first");
     try {
       await resetPassword(email);
-      toast.success('Password reset email sent!');
+      toast.success("Password reset email sent!");
     } catch (err) {
-      console.error('Reset failed:', err);
-      toast.error('Unable to send password reset email');
+      console.error("Reset failed:", err);
+      toast.error("Unable to send password reset email");
     }
   };
 
@@ -116,15 +116,15 @@ const Login = () => {
         containerStyle={{ top: 60 }}
         toastOptions={{
           style: {
-            background: '#0f172a',
-            color: '#f1f5f9',
-            border: '1px solid rgba(99,102,241,0.3)',
-            borderRadius: '12px',
-            fontSize: '14px',
+            background: "#0f172a",
+            color: "#f1f5f9",
+            border: "1px solid rgba(99,102,241,0.3)",
+            borderRadius: "12px",
+            fontSize: "14px",
             fontFamily: "'Plus Jakarta Sans', sans-serif",
           },
-          success: { iconTheme: { primary: '#6366f1', secondary: '#fff' } },
-          error: { iconTheme: { primary: '#f43f5e', secondary: '#fff' } },
+          success: { iconTheme: { primary: "#6366f1", secondary: "#fff" } },
+          error: { iconTheme: { primary: "#f43f5e", secondary: "#fff" } },
         }}
       />
 
@@ -512,7 +512,7 @@ const Login = () => {
           <div className="login-orb login-orb-2" />
           <img src={loginImg} alt="login" className="login-img" />
           <div className="login-badge">
-            <HiTicket style={{ color: '#818cf8', fontSize: 16 }} />
+            <HiTicket style={{ color: "#818cf8", fontSize: 16 }} />
             <span>Welcome back to VOYAGO</span>
           </div>
         </div>
@@ -560,9 +560,9 @@ const Login = () => {
                   <div className="login-field-wrap">
                     <FiMail className="login-field-icon" />
                     <input
-                      {...register('email', { required: 'Email is required' })}
+                      {...register("email", { required: "Email is required" })}
                       placeholder="Email address"
-                      className={`login-field-input${errors.email ? ' input-error' : ''}`}
+                      className={`login-field-input${errors.email ? " input-error" : ""}`}
                     />
                   </div>
                   {errors.email && (
@@ -575,22 +575,22 @@ const Login = () => {
                   <div className="login-field-wrap">
                     <FiLock className="login-field-icon" />
                     <input
-                      {...register('password', {
-                        required: 'Password is required',
+                      {...register("password", {
+                        required: "Password is required",
                         minLength: {
                           value: 6,
-                          message: 'At least 6 characters',
+                          message: "At least 6 characters",
                         },
                       })}
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       placeholder="Password"
-                      className={`login-field-input${errors.password ? ' input-error' : ''}`}
-                      style={{ paddingRight: '44px' }}
+                      className={`login-field-input${errors.password ? " input-error" : ""}`}
+                      style={{ paddingRight: "44px" }}
                     />
                     <button
                       type="button"
                       className="login-eye-toggle"
-                      onClick={() => setShowPassword(p => !p)}
+                      onClick={() => setShowPassword((p) => !p)}
                       tabIndex={-1}
                     >
                       {showPassword ? <FiEyeOff /> : <FiEye />}

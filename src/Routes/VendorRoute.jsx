@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../Context/AuthContext';
-import { Navigate } from 'react-router';
+import React, { useContext } from "react";
+import { AuthContext } from "../Context/AutContext";
+import { Navigate } from "react-router";
 
 const VendorRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -14,18 +14,18 @@ const VendorRoute = ({ children }) => {
   }
 
   // token থেকে role বের করো
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   let role = user.role;
 
   if (!role && token) {
     try {
-      role = JSON.parse(atob(token.split('.')[1])).role;
+      role = JSON.parse(atob(token.split(".")[1])).role;
     } catch {
       role = null;
     }
   }
 
-  if (role !== 'vendor') {
+  if (role !== "vendor") {
     return <Navigate to="/" replace />;
   }
 
